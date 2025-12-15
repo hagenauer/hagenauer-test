@@ -3831,200 +3831,88 @@
     Keine Treffer. Passen Sie den Filter an.
    </p>
   </div>
-  <script>
-   (function () {
-      // Turn every existing ".section" into an accessible accordion.
-      // If a section already contains an <h2> and <ul>, we will create the header button and content wrapper for you.
-      const sections = Array.from(document.querySelectorAll('.section'));
+<script>
+(function () {
+  const sections = Array.from(document.querySelectorAll('.section'));
 
-      for (const sec of sections) {
-        // Skip if already processed (has .section-header)
-        if (sec.querySelector('.section-header')) continue;
+  for (const sec of sections) {
+    if (sec.querySelector('.section-header')) continue;
 
-        const titleEl = sec.querySelector('h2');
-        const listEl  = sec.querySelector('ul');
+    const titleEl = sec.querySelector('h2');
+    const listEl  = sec.querySelector('ul');
+    if (!titleEl) continue;
 
-        if (!titleEl) continue;
+    const headerBtn = document.createElement('button');
+    headerBtn.className = 'section-header';
+    headerBtn.type = 'button';
 
-        // Build header button
-        const headerBtn = document.createElement('button');
-        headerBtn.className = 'section-header';
-        headerBtn.type = 'button';
+    const chev = document.createElement('span');
+    chev.className = 'chev';
 
-        const chev = document.createElement('span');
-        chev.className = 'chev'; chev.setAttribute('aria-hidden','true');
+    const titleSpan = document.createElement('span');
+    titleSpan.className = 'section-title';
+    titleSpan.textContent = titleEl.textContent.trim();
 
-        const titleSpan = document.createElement('span');
-        titleSpan.className = 'section-title';
-        titleSpan.textContent = titleEl.textContent.trim();
+    const count = document.createElement('span');
+    count.className = 'count';
 
-        const count = document.createElement('span');
-        count.className = 'count';
-        count.setAttribute('data-count','');
-        count.textContent = '–';
+    headerBtn.append(chev, titleSpan, count);
 
-        headerBtn.append(chev, titleSpan, count);
+    const content = document.createElement('div');
+    content.className = 'section-content';
+    if (listEl) content.appendChild(listEl);
 
-        // Content wrapper
-        const content = document.createElement('div');
-        const panelId = (sec.id ? sec.id : titleSpan.textContent.toLowerCase().replace(/\s+/g,'-')) + '-panel';
-        content.className = 'section-content';
-        content.id = panelId;
-        content.setAttribute('role','region');
-
-        // Move list into content
-        if (listEl) content.appendChild(listEl);
-
-        // Insert into section
-        sec.innerHTML = ''; // clear original
-        sec.setAttribute('aria-expanded', 'false');
-        sec.append(headerBtn, content);
-
-        // Link ARIA
-        if (sec.id) headerBtn.setAttribute('aria-controls', panelId);
-      }
-
-      // Count items per section
-      function updateCounts(){
-        for (const sec of document.querySelectorAll('.section')) {
-          const ul = sec.querySelector('ul');
-          const count = sec.querySelector('[data-count]');
-          if (!count) continue;
-          const n = ul ? ul.querySelectorAll('li').length : 0;
-          count.textContent = n.toString();
-        }
-      }
-      updateCounts();
-
-      // Toggle behavior
-      function toggleSection(sec, expand){
-        const isOpen = sec.getAttribute('aria-expanded') === 'true';
-        const next = (typeof expand === 'boolean') ? expand : !isOpen;
-        sec.setAttribute('aria-expanded', next ? 'true' : 'false');
-      }
-
-      // Click handlers
-      document.addEventListener('click', (e) => {
-        const btn = e.target.closest('.section-header');
-        if (!btn) return;
-        const sec = btn.closest('.section');
-        toggleSection(sec);
-      });
-
-      // Keyboard: toggle with Enter/Space (native button already handles), Arrow Up/Down to move focus
-      document.addEventListener('keydown', (e) => {
-        const btn = e.target.closest('.section-header');
-        if (!btn) return;
-        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-          e.preventDefault();
-          const headers = Array.from(document.querySelectorAll('.section-header'));
-          const i = headers.indexOf(btn);
-          const j = e.key === 'ArrowDown' ? Math.min(i+1, headers.length-1) : Math.max(i-1,0);
-          headers[j].focus();
-        }
-      });
-
-      // Hash deep-link: if URL has #id, open that section
-      if (location.hash) {
-        const target = document.querySelector(location.hash);
-        if (target && target.classList.contains('section')) {
-          toggleSection(target, true);
-          const header = target.querySelector('.section-header');
-          if (header) header.scrollIntoView({behavior:'smooth', block:'start'});
-        }
-      }
-
-      // Expand/Collapse All
-      const expandAllBtn = document.getElementById('expandAll');
-      const collapseAllBtn = document.getElementById('collapseAll');
-      expandAllBtn?.addEventListener('click', () => {
-        document.querySelectorAll('.section').forEach(sec => toggleSection(sec, true));
-      });
-      collapseAllBtn?.addEventListener('click', () => {
-        document.querySelectorAll('.section').forEach(sec => toggleSection(sec, false));
-      });
-
-      // Filter (search across titles and list items)
-      const input = document.getElementById('search');
-      const clearBtn = document.getElementById('clearFilter');
-      const noResults = document.getElementById('noResults');
-
-      function applyFilter(q){
-        q = (q || '').trim().toLowerCase();
-        let visibleCount = 0;
-
-        document.querySelectorAll('.section').forEach(sec => {
-          const title = (sec.querySelector('.section-title')?.textContent || '').toLowerCase();
-
-          // Match in title OR any li text
-          const items = Array.from(sec.querySelectorAll('li'));
-          const matchesItem = items.some(li => li.textContent.toLowerCase().includes(q));
-          const matchesTitle = title.includes(q);
-
-          // Show/hide items inside matched sections
-          let sectionHasMatch = false;
-          if (q) {
-            items.forEach(li => {
-              const hit = li.textContent.toLowerCase().includes(q);
-              li.style.display = hit ? '' : 'none';
-              if (hit) sectionHasMatch = true;
-            });
-          } else {
-            items.forEach(li => li.style.display = '');
-          }
-
-          const showSection = !q || matchesTitle || sectionHasMatch;
-          sec.hidden = !showSection;
-          if (showSection) visibleCount++;
-
-          // If filtering, auto-expand matched sections
-          if (q && showSection) {
-            sec.setAttribute('aria-expanded','true');
-          }
-        });
-
-        noResults.hidden = visibleCount > 0;
-        updateCounts();
-      }
-
-      input?.addEventListener('input', (e) => applyFilter(e.target.value));
-      clearBtn?.addEventListener('click', () => {
-        input.value = '';
-        applyFilter('');
-      });
-
-      // Initial: all sections visible, lists collapsed
-      document.querySelectorAll('.section').forEach(sec => sec.setAttribute('aria-expanded','false'));
-    })();
-  </script>
-
-  /* ----------adds numbering,adds Bemerkung input + Status select,handles the code modal---------- */
-
-  <script>
-document.addEventListener('DOMContentLoaded', () => {
-  const STORAGE_KEY = 'main_kategorie_group_3_states';
-
-  function loadStates() {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
-    } catch (e) {
-      return {};
-    }
+    sec.innerHTML = '';
+    sec.setAttribute('aria-expanded', 'false');
+    sec.append(headerBtn, content);
   }
 
-  function saveStates(states) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(states));
+  function updateCounts(){
+    document.querySelectorAll('.section').forEach(sec => {
+      const count = sec.querySelector('.count');
+      const items = sec.querySelectorAll('li').length;
+      count.textContent = items;
+    });
+  }
+  updateCounts();
+
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('.section-header');
+    if (!btn) return;
+    const sec = btn.closest('.section');
+    sec.setAttribute(
+      'aria-expanded',
+      sec.getAttribute('aria-expanded') === 'true' ? 'false' : 'true'
+    );
+  });
+
+})();
+</script>
+
+
+
+
+ <script>
+const API = "/.netlify/functions/status";
+
+document.addEventListener('DOMContentLoaded', async () => {
+
+  /* ---------- LOAD STATES FROM DATABASE ---------- */
+  let states = {};
+  try {
+    const res = await fetch(API);
+    states = await res.json();
+  } catch (e) {
+    console.error("Failed to load states", e);
   }
 
-  const states = loadStates();
-
-  /* ---------- CODE MODAL (for status change) ---------- */
-  const codeModal      = document.getElementById('codeModal');
-  const codeInput      = document.getElementById('codeInputModal');
-  const codeError      = document.getElementById('codeError');
-  const codeOk         = document.getElementById('codeOk');
-  const codeCancel     = document.getElementById('codeCancel');
-  const codeBackdrop   = codeModal.querySelector('.modal-backdrop');
+  /* ---------- CODE MODAL ---------- */
+  const codeModal    = document.getElementById('codeModal');
+  const codeInput    = document.getElementById('codeInputModal');
+  const codeError    = document.getElementById('codeError');
+  const codeOk       = document.getElementById('codeOk');
+  const codeCancel   = document.getElementById('codeCancel');
+  const codeBackdrop = codeModal.querySelector('.modal-backdrop');
 
   let codeOnSuccess = null;
   let codeOnCancel  = null;
@@ -4040,109 +3928,85 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function closeCodeModal(){
     codeModal.classList.add('hidden');
-    codeOnSuccess = null;
-    codeOnCancel  = null;
   }
 
-  codeOk.addEventListener('click', () => {
+  codeOk.onclick = () => {
     if (codeInput.value.trim() === 'Fertig') {
-      if (codeOnSuccess) codeOnSuccess();
+      codeOnSuccess?.();
       closeCodeModal();
     } else {
       codeError.textContent = 'Falscher Code.';
     }
-  });
+  };
 
-  const cancelCode = () => {
-    if (codeOnCancel) codeOnCancel();
+  codeCancel.onclick = codeBackdrop.onclick = () => {
+    codeOnCancel?.();
     closeCodeModal();
   };
-  codeCancel.addEventListener('click', cancelCode);
-  codeBackdrop.addEventListener('click', cancelCode);
-
-  codeInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-      codeOk.click();
-    } else if (e.key === 'Escape') {
-      cancelCode();
-    }
-  });
 
   /* ---------- BEMERKUNG MODAL ---------- */
   const remarkModal    = document.getElementById('remarkModal');
   const remarkTextarea = document.getElementById('remarkTextarea');
-  const remarkCancel   = document.getElementById('remarkCancel');
   const remarkOk       = document.getElementById('remarkOk');
+  const remarkCancel   = document.getElementById('remarkCancel');
   const remarkBackdrop = remarkModal.querySelector('.modal-backdrop');
 
   let remarkOnSave = null;
 
-  function openRemarkModal(initialText, onSave){
+  function openRemarkModal(text, onSave){
     remarkOnSave = onSave;
-    remarkTextarea.value = initialText || '';
+    remarkTextarea.value = text || '';
     remarkModal.classList.remove('hidden');
     remarkTextarea.focus();
   }
 
   function closeRemarkModal(){
     remarkModal.classList.add('hidden');
-    remarkOnSave = null;
   }
 
-  remarkOk.addEventListener('click', () => {
-    if (remarkOnSave) remarkOnSave(remarkTextarea.value);
-    closeRemarkModal();
-  });
-
-  const cancelRemark = () => {
+  remarkOk.onclick = () => {
+    remarkOnSave?.(remarkTextarea.value);
     closeRemarkModal();
   };
-  remarkCancel.addEventListener('click', cancelRemark);
-  remarkBackdrop.addEventListener('click', cancelRemark);
 
-  remarkTextarea.addEventListener('keydown', e => {
-    if (e.key === 'Escape') {
-      cancelRemark();
-    }
-  });
+  remarkCancel.onclick = remarkBackdrop.onclick = closeRemarkModal;
 
-  /* ---------- Helpers ---------- */
-  function applyStatusAppearance(li, statusSelect, status){
+  /* ---------- HELPERS ---------- */
+  function applyStatusAppearance(li, status){
     li.classList.remove('status-not-started','status-in-progress','status-completed');
-
-    if (status === 'not_started') {
-      li.classList.add('status-not-started');
-    } else if (status === 'in_arbeit') {
-      li.classList.add('status-in-progress');
-    } else if (status === 'abgeschlossen') {
-      li.classList.add('status-completed');
-    }
+    if (status === 'not_started') li.classList.add('status-not-started');
+    if (status === 'in_arbeit') li.classList.add('status-in-progress');
+    if (status === 'abgeschlossen') li.classList.add('status-completed');
   }
 
-  /* ---------- Build rows: numbering + controls ---------- */
+  async function saveToDB(itemId, status, remark){
+    await fetch(API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ itemId, status, remark })
+    });
+  }
+
+  /* ---------- BUILD LIST ITEMS ---------- */
   document.querySelectorAll('.section ul').forEach(ul => {
     let counter = 1;
 
     ul.querySelectorAll('li').forEach(li => {
       const nameSpan = li.querySelector('.item-name');
-      const link     = li.querySelector('a');
-      if (!nameSpan || !link) return;
-
-      // numbering
-      const indexSpan = document.createElement('span');
-      indexSpan.className = 'item-index';
-      indexSpan.textContent = counter + '.';
-      counter += 1;
-      li.insertBefore(indexSpan, nameSpan);
+      if (!nameSpan) return;
 
       const itemId = nameSpan.textContent.trim();
 
-      // controls: Bemerkung button + status select
+      const index = document.createElement('span');
+      index.className = 'item-index';
+      index.textContent = counter++ + '.';
+      li.insertBefore(index, nameSpan);
+
       const controls = document.createElement('div');
       controls.className = 'item-controls';
       controls.innerHTML = `
         <button type="button" class="note-btn">Bemerkung</button>
-        <label>aktueller Status:
+        <label>Status:
           <select class="status-select">
             <option value="not_started">noch nicht angefangen</option>
             <option value="in_arbeit">noch in Arbeit</option>
@@ -4152,62 +4016,45 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
       li.appendChild(controls);
 
-      const noteBtn      = controls.querySelector('.note-btn');
-      const statusSelect = controls.querySelector('.status-select');
+      const noteBtn = controls.querySelector('.note-btn');
+      const select  = controls.querySelector('.status-select');
 
-      // restore saved state
       const saved = states[itemId] || {};
-      let remarkText   = saved.remark || '';
-      let currentStatus= saved.status || 'not_started';
+      let remark = saved.remark || '';
+      let status = saved.status || 'not_started';
 
-      statusSelect.value = currentStatus;
-      applyStatusAppearance(li, statusSelect, currentStatus);
+      select.value = status;
+      applyStatusAppearance(li, status);
 
-      function updateState(){
-        states[itemId] = {
-          remark: remarkText,
-          status: currentStatus
-        };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(states));
-      }
+      noteBtn.classList.toggle('has-note', !!remark);
+      noteBtn.title = remark || 'Keine Bemerkung';
 
-      // initial note button look + tooltip
-      function refreshNoteButton(){
-        noteBtn.classList.toggle('has-note', !!remarkText);
-        noteBtn.title = remarkText || 'Keine Bemerkung';
-      }
-      refreshNoteButton();
-
-      // Bemerkung button => open modal
-      noteBtn.addEventListener('click', () => {
-        openRemarkModal(remarkText, newText => {
-          remarkText = newText || '';
-          refreshNoteButton();
-          updateState();
+      noteBtn.onclick = () => {
+        openRemarkModal(remark, async text => {
+          remark = text || '';
+          noteBtn.classList.toggle('has-note', !!remark);
+          noteBtn.title = remark || 'Keine Bemerkung';
+          await saveToDB(itemId, status, remark);
         });
-      });
+      };
 
-      // Status change => always ask for code
-      statusSelect.addEventListener('change', () => {
-        const newStatus = statusSelect.value;
-        if (newStatus === currentStatus) return;
-
-        // ask for code every time
+      select.onchange = () => {
+        const next = select.value;
         openCodeModal(
-          () => { // success
-            currentStatus = newStatus;
-            applyStatusAppearance(li, statusSelect, currentStatus);
-            updateState();
+          async () => {
+            status = next;
+            applyStatusAppearance(li, status);
+            await saveToDB(itemId, status, remark);
           },
-          () => { // cancel
-            statusSelect.value = currentStatus;
-          }
+          () => select.value = status
         );
-      });
+      };
     });
   });
+
 });
 </script>
+
 
 
 <!-- Modal for Abschluss-Code -->
