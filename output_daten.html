@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" sizes="32x32" href="logo.png">
+  <title>Main Kategorien</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background-color: #f9f9f9;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+      background: linear-gradient(90deg, #0077cc, #00cc88);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      max-width: 800px;
+      margin: auto;
+    }
+    li {
+      background-color: #ffffff;
+      margin: 15px 0;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      font-size: 18px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    li:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    a {
+      color: #0077cc;
+      font-weight: bold;
+      text-decoration: none;
+      margin-left: 10px;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    /* Dark mode style */
+    .dark-mode {
+      background-color: #333;
+      color: #fff;
+    }
+    .dark-mode li {
+      background-color: #444;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Dark Mode Toggle Button -->
+  <button id="themeToggle">Toggle Dark Mode</button>
+
+  <h1>Output Daten</h1>
+  <ul>
+    <li>Strukturierte Eingabedaten  <a href="https://d205374-my.sharepoint.com/:x:/g/personal/cyriac_hagenauer_tech/EYo_4f1MEX5BoNwY8AsBmuEBIp4DtvkZcUr5WqwoL_gdHQ?e=lOVgNf">➡️ Daten ansehen</a></li>
+    <li>Aktualisierte Artikelnummern und zugehörige neue Eigenschaften  <a href="https://d205374-my.sharepoint.com/:x:/g/personal/cyriac_hagenauer_tech/EbW_sG_LH6BEndF4YhY3A1IBII0c9PHe2jZWwL2YiAE5fQ?e=86ff2X">➡️ Daten ansehen</a></li>
+    <li>SAP-Importdatei  <a href="https://d205374-my.sharepoint.com/:x:/g/personal/cyriac_hagenauer_tech/EQQslCP624pGlIiGgJGmYzEBgEiIvX5vLglvUNkTEgoutg?e=fxVr1W">➡️ Daten ansehen</a></li>
+    <li>Die richtige Vorlage für die SAP-Importdatei <a href="sap_vorlage.html">➡️ Daten ansehen</a></li>
+    
+  </ul>
+
+  <script>
+    // Toggle dark mode
+    const toggleBtn = document.getElementById("themeToggle");
+    toggleBtn.addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+    });
+  </script>
+
+</body>
+</html>

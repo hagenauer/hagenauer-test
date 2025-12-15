@@ -1,0 +1,2116 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hagenauer Datenbank | Hagenauer GmbH & Co. KG</title>
+  <link rel="stylesheet" href="styles_1.css" />
+  <link rel="icon" type="image/png" sizes="32x32" href="logo.png">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <h1 class="title">Artikel Datenbank</h1>
+      </div>
+    </header>
+
+    <section class="panel">
+      <div class="topbar">
+        <div class="search"><input id="q" type="search" placeholder="Suche in aktueller Ebene…" autocomplete="off" /></div>
+        <button class="btn" id="backBtn" title="Eine Ebene hoch">⟵ Zurück</button>
+        <button class="btn" id="homeBtn" title="Zur Startseite">⌂ Start</button>
+      </div>
+
+      <nav class="breadcrumbs" id="crumbs" aria-label="Breadcrumbs"></nav>
+      <div id="grid" class="grid" role="list"></div>
+      <div id="empty" class="empty" hidden>Keine Einträge gefunden.</div>
+      <p class="hint">Tipp: Klicken Sie eine Kachel an, um eine Ebene tiefer zu navigieren. Kategorien ohne Unterpunkte gelten als Endknoten.</p>
+    </section>
+
+    <footer class="footer">© 2025 Hagenauer GmbH &amp; Co. KG</footer>
+  </div>
+
+  <script>
+  // =========================
+  // 1) DATENQUELLE AUS EXCEL
+  // =========================
+  // Struktur: ein Array von Knoten { name: string, children: [...] }
+  // -> Dieser Block spiegelt Ihre Excel-Spalten 1..6 wider.
+  // Ersetzen Sie den Inhalt von DATA durch Ihre generierten Daten.
+  // (Ich habe Ihre Beispiele zur Veranschaulichung eingetragen.)
+  const DATA = [
+  {
+    "name": "Antriebstechnik",
+    "children": [
+      {
+        "name": "Kettentechnik",
+        "children": [
+          {
+            "name": "Kettenräder",
+            "children": [
+              {
+                "name": "Kettenräder DIN 8187 für Taperlock-Spannbuchsen",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kettenr%C3%A4der/Kettenr%C3%A4der%20DIN%208187%20f%C3%BCr%20Taperlock-Spannbuchsen.csv?web=1"
+              },
+              {
+                "name": "Kettenräder DIN 8187 vorgebohrt",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kettenr%C3%A4der/Kettenr%C3%A4der%20DIN%208187%20vorgebohrt.csv?web=1"
+              },
+              {
+                "name": "Kettenräder DIN 8188 vorgebohrt",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kettenr%C3%A4der/Kettenr%C3%A4der%20DIN%208188%20vorgebohrt.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Rollenketten",
+            "children": [
+              {
+                "name": "Rollenketten DIN 8187",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rollenketten/Rollenketten%20DIN%208187.csv?web=1"
+              },
+              {
+                "name": "Rollenketten Werksnorm",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rollenketten/Rollenketten%20Werksnorm.csv?web=1"
+              },
+              {
+                "name": "Rollenketten DIN 8188",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rollenketten/Rollenketten%20DIN%208188.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Verschlußglieder",
+            "children": [
+              {
+                "name": "Verschlußglieder DIN 8187",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Verschlu%C3%9Fglieder/Verschlu%C3%9Fglieder%20DIN%208187.csv?web=1"
+              },
+              {
+                "name": "Verschlußglieder Werksnorm",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Verschlu%C3%9Fglieder/Verschlu%C3%9Fglieder%20Werksnorm.csv?web=1"
+              },
+              {
+                "name": "Verschlußglieder DIN 8188",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Verschlu%C3%9Fglieder/Verschlu%C3%9Fglieder%20DIN%208188.csv?web=1"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Kupplungen",
+        "children": [
+          {
+            "name": "Starre Wellenkupplung",
+            "children": [
+              {
+                "name": "Wellenkupplungen CLAMPEX KTR 700",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Starre%20Wellenkupplung/Wellenkupplungen%20CLAMPEX%20KTR%20700.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Klauenkupplungen drehelastisch",
+            "children": [
+              {
+                "name": "KTR ROTEX",
+                "children": [
+                  {
+                    "name": "KTR ROTEX Zahnkranz",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/KTR%20ROTEX/KTR%20ROTEX%20Zahnkranz.csv?web=1"
+                  },
+                  {
+                    "name": "KTR ROTEX Naben",
+                    "children": [
+                      {
+                        "name": "ROTEX NABE Un-Vorgebohrt",
+                        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/KTR%20ROTEX%20Naben/ROTEX%20NABE%20Un-Vorgebohrt.csv?web=1"
+                      },
+                      {
+                        "name": "KTR ROTEX Nabe Kegel",
+                        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/KTR%20ROTEX%20Naben/KTR%20ROTEX%20Nabe%20Kegel.csv?web=1"
+                      },
+                      {
+                        "name": "KTR ROTEX Nabe TB1",
+                        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/KTR%20ROTEX%20Naben/KTR%20ROTEX%20Nabe%20TB1.csv?web=1"
+                      },
+                      {
+                        "name": "KTR ROTEX Nabe TB2",
+                        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/KTR%20ROTEX%20Naben/KTR%20ROTEX%20Nabe%20TB2.csv?web=1"
+                      }
+                    ]
+                  },
+                  {
+                    "name": "KTR ROTEX Flansche",
+                    "children": [
+                      {
+                        "name": "KTR ROTEX Mitnehmerflansche",
+                        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/KTR%20ROTEX%20Flansche/KTR%20ROTEX%20Mitnehmerflansche.csv?web=1"
+                      },
+                      {
+                        "name": "KTR ROTEX K-Flansche",
+                        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/KTR%20ROTEX%20Flansche/KTR%20ROTEX%20K-Flansche.csv?web=1"
+                      },
+                      {
+                        "name": "KTR ROTEX K-Flansche N",
+                        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/KTR%20ROTEX%20Flansche/KTR%20ROTEX%20K-Flansche%20N.csv?web=1"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Klauenkupplungen spielfrei",
+            "children": [
+              {
+                "name": "KTR ROTEX GS",
+                "children": [
+                  {
+                    "name": "KTR ROTEX GS Mittelstücke",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/KTR%20ROTEX%20GS/KTR%20ROTEX%20GS%20Mittelst%C3%BCcke.csv?web=1"
+                  },
+                  {
+                    "name": "KTR ROTEX GS Zahnkranz",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/KTR%20ROTEX%20GS/KTR%20ROTEX%20GS%20Zahnkranz.csv?web=1"
+                  },
+                  {
+                    "name": "KTR ROTEX GS Naben",
+                    "children": [
+                      {
+                        "name": "KTR ROTEX GS NABEN Ungebohrt",
+                        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/KTR%20ROTEX%20GS%20Naben/KTR%20ROTEX%20GS%20NABEN%20Ungebohrt.csv?web=1"
+                      },
+                      {
+                        "name": "KTR ROTEX GS Klemmnaben",
+                        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/KTR%20ROTEX%20GS%20Naben/KTR%20ROTEX%20GS%20Klemmnaben.csv?web=1"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Riementechnik",
+        "children": [
+          {
+            "name": "Keilriemenscheiben",
+            "children": [
+              {
+                "name": "Profil SPA",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Keilriemenscheiben/Profil%20SPA.csv?web=1"
+              },
+              {
+                "name": "Profil SPB",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Keilriemenscheiben/Profil%20SPB.csv?web=1"
+              },
+              {
+                "name": "Profil SPC",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Keilriemenscheiben/Profil%20SPC.csv?web=1"
+              },
+              {
+                "name": "Profil SPZ",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Keilriemenscheiben/Profil%20SPZ.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Keilrippenriemen",
+            "children": [
+              {
+                "name": "Profil PJ _ J",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Keilrippenriemen/Profil%20PJ%20_%20J.csv?web=1"
+              },
+              {
+                "name": "Profil PL _ L",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Keilrippenriemen/Profil%20PL%20_%20L.csv?web=1"
+              },
+              {
+                "name": "Profil PM _ M",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Keilrippenriemen/Profil%20PM%20_%20M.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Klassische Keilriemen ummantelt DIN 2215",
+            "children": [
+              {
+                "name": "10_Z (10 mm)",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Klassische%20Keilriemen%20ummantelt%20DIN%202215/10_Z%20%2810%20mm%29.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Klassische Keilriemen ummantelt DIN 2216",
+            "children": [
+              {
+                "name": "13_A (13 mm)",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Klassische%20Keilriemen%20ummantelt%20DIN%202215/13_A%20%2813%20mm%29.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Klassische Keilriemen ummantelt DIN 2217",
+            "children": [
+              {
+                "name": "17_B (17 mm)",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Klassische%20Keilriemen%20ummantelt%20DIN%202215/17_B%20%2817%20mm%29.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Schmalkeilriemen DIN 7753",
+            "children": [
+              {
+                "name": "XPA 12,7 mm Breite",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schmalkeilriemen%20DIN%207753/XPA%2012%2C7%20mm%20Breite.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Schmalkeilriemen DIN 7754",
+            "children": [
+              {
+                "name": "SPA 12,7 mm Breite",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schmalkeilriemen%20DIN%207753/SPA%2012%2C7%20mm%20Breite.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Schmalkeilriemen DIN 7755",
+            "children": [
+              {
+                "name": "SPB 16,3 mm Breite",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schmalkeilriemen%20DIN%207753/SPB%2016%2C3%20mm%20Breite.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Schmalkeilriemen DIN 7756",
+            "children": [
+              {
+                "name": "SPC 22 mm Breite",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schmalkeilriemen%20DIN%207753/SPC%2022%20mm%20Breite.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Schmalkeilriemen DIN 7757",
+            "children": [
+              {
+                "name": "SPZ 9,7 mm Breite",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schmalkeilriemen%20DIN%207753/SPZ%209%2C7%20mm%20Breite.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Schmalkeilriemen DIN 7758",
+            "children": [
+              {
+                "name": "XPB 16,3 mm Breite",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schmalkeilriemen%20DIN%207753/XPB%2016%2C3%20mm%20Breite.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Schmalkeilriemen DIN 7759",
+            "children": [
+              {
+                "name": "XPC 22 mm Breite",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schmalkeilriemen%20DIN%207753/XPC%2022%20mm%20Breite.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Schmalkeilriemen DIN 7760",
+            "children": [
+              {
+                "name": "XPZ 9,7 mm Breite",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schmalkeilriemen%20DIN%207753/XPZ%209%2C7%20mm%20Breite.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Schmalkeilriemen DIN 7761",
+            "children": [
+              {
+                "name": "5VX 15 mm Breite",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schmalkeilriemen%20DIN%207753/5VX%2015%20mm%20Breite.csv?web=1"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Welle-Nabe-Verbindungen",
+        "children": [
+          {
+            "name": "Taper-Buchsen",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Welle-Nabe-Verbindungen/Taper-Buchsen.csv?web=1"
+          },
+          {
+            "name": "Einschweissnaben",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Welle-Nabe-Verbindungen/Einschweissnaben.csv?web=1"
+          },
+          {
+            "name": "Spannsätze",
+            "children": [
+              {
+                "name": "Außenspannsätze",
+                "children": [
+                  {
+                    "name": "Außenspannsätze CLAMPEX KTR 603",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Au%C3%9Fenspanns%C3%A4tze/Au%C3%9Fenspanns%C3%A4tze%20CLAMPEX%20KTR%20603.csv?web=1"
+                  },
+                  {
+                    "name": "Außenspannsätze CLAMPEX KTR 620",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Au%C3%9Fenspanns%C3%A4tze/Au%C3%9Fenspanns%C3%A4tze%20CLAMPEX%20KTR%20620.csv?web=1"
+                  }
+                ]
+              },
+              {
+                "name": "Innenspannsätze",
+                "children": [
+                  {
+                    "name": "Innenspannsätze nicht selbstzentrierend",
+                    "children": [
+                      {
+                        "name": "Innenspannsätze CLAMPEX KTR 100",
+                        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Innenspanns%C3%A4tze%20nicht%20selbstzentrierend/Innenspanns%C3%A4tze%20CLAMPEX%20KTR%20100.csv?web=1"
+                      },
+                      {
+                        "name": "Innenspannsätze CLAMPEX KTR 150",
+                        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Innenspanns%C3%A4tze%20nicht%20selbstzentrierend/Innenspanns%C3%A4tze%20CLAMPEX%20KTR%20150.csv?web=1"
+                      },
+                      {
+                        "name": "Innenspannsätze CLAMPEX KTR 125",
+                        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Innenspanns%C3%A4tze%20nicht%20selbstzentrierend/Innenspanns%C3%A4tze%20CLAMPEX%20KTR%20125.csv?web=1"
+                      }
+                    ]
+                  },
+                  {
+                    "name": "Innenspannsätze selbstzentrierend",
+                    "children": [
+                      {
+                        "name": "Innenspannsätze CLAMPEX KTR 105",
+                        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Innenspanns%C3%A4tze%20selbstzentrierend/Innenspanns%C3%A4tze%20CLAMPEX%20KTR%20105.csv?web=1"
+                      },
+                      {
+                        "name": "Innenspannsätze CLAMPEX KTR 130",
+                        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Innenspanns%C3%A4tze%20selbstzentrierend/Innenspanns%C3%A4tze%20CLAMPEX%20KTR%20130.csv?web=1"
+                      },
+                      {
+                        "name": "Innenspannsätze CLAMPEX KTR 131",
+                        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Innenspanns%C3%A4tze%20selbstzentrierend/Innenspanns%C3%A4tze%20CLAMPEX%20KTR%20131.csv?web=1"
+                      },
+                      {
+                        "name": "Innenspannsätze CLAMPEX KTR 200",
+                        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Innenspanns%C3%A4tze%20selbstzentrierend/Innenspanns%C3%A4tze%20CLAMPEX%20KTR%20200.csv?web=1"
+                      },
+                      {
+                        "name": "Innenspannsätze CLAMPEX KTR 201",
+                        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Innenspanns%C3%A4tze%20selbstzentrierend/Innenspanns%C3%A4tze%20CLAMPEX%20KTR%20201.csv?web=1"
+                      },
+                      {
+                        "name": "Innenspannsätze CLAMPEX KTR 203",
+                        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Innenspanns%C3%A4tze%20selbstzentrierend/Innenspanns%C3%A4tze%20CLAMPEX%20KTR%20203.csv?web=1"
+                      },
+                      {
+                        "name": "Innenspannsätze Clampex KTR 206",
+                        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Innenspanns%C3%A4tze%20selbstzentrierend/Innenspanns%C3%A4tze%20Clampex%20KTR%20206.csv?web=1"
+                      },
+                      {
+                        "name": "Innenspannsätze CLAMPEX KTR 225",
+                        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Innenspanns%C3%A4tze%20selbstzentrierend/Innenspanns%C3%A4tze%20CLAMPEX%20KTR%20225.csv?web=1"
+                      },
+                      {
+                        "name": "Innenspannsätze CLAMPEX KTR 250",
+                        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Innenspanns%C3%A4tze%20selbstzentrierend/Innenspanns%C3%A4tze%20CLAMPEX%20KTR%20250.csv?web=1"
+                      },
+                      {
+                        "name": "Innenspannsätze CLAMPEX KTR 400",
+                        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Innenspanns%C3%A4tze%20selbstzentrierend/Innenspanns%C3%A4tze%20CLAMPEX%20KTR%20400.csv?web=1"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Arbeitsschutz",
+    "children": [
+      {
+        "name": "Handschuhe",
+        "children": [
+          {
+            "name": "Lederhandschuhe",
+            "children": [
+              {
+                "name": "Lederhandschuhe Granit",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Lederhandschuhe/Lederhandschuhe%20Granit.csv?web=1"
+              },
+              {
+                "name": "Lederhandschuhe Griffy",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Lederhandschuhe/Lederhandschuhe%20Griffy.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Strickhandschuhe",
+            "children": [
+              {
+                "name": "Feinstrickhandschuhe FOAM SANDY",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Strickhandschuhe/Feinstrickhandschuhe%20FOAM%20SANDY.csv?web=1"
+              },
+              {
+                "name": "Feinstrickhandschuhe NITRIL GRID",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Strickhandschuhe/Feinstrickhandschuhe%20NITRIL%20GRID.csv?web=1"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Hygiene",
+        "children": [
+          {
+            "name": "Hautreinigung",
+            "children": [
+              {
+                "name": "Handwaschpasten",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Hautreinigung/Handwaschpasten.csv?web=1"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Dichtungstechnik",
+    "children": [
+      {
+        "name": "Axialdichtungen",
+        "children": [
+          {
+            "name": "Gammaringe",
+            "children": [
+              {
+                "name": "Gammaringe VRM 01",
+                "children": [
+                  {
+                    "name": "Gammaringe VRM 01 NBR",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gammaringe%20VRM%2001/Gammaringe%20VRM%2001%20NBR.csv?web=1"
+                  },
+                  {
+                    "name": "Gammaringe VRM 01 FKM",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gammaringe%20VRM%2001/Gammaringe%20VRM%2001%20FKM.csv?web=1"
+                  }
+                ]
+              },
+              {
+                "name": "Gammaringe VRM 02",
+                "children": [
+                  {
+                    "name": "Gammaringe VRM 02 NBR",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gammaringe%20VRM%2002/Gammaringe%20VRM%2002%20NBR.csv?web=1"
+                  },
+                  {
+                    "name": "Gammaringe VRM 02 FKM",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gammaringe%20VRM%2002/Gammaringe%20VRM%2002%20FKM.csv?web=1"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "V-Ringe",
+            "children": [
+              {
+                "name": "V-Ringe VA",
+                "children": [
+                  {
+                    "name": "V-Ringe VA NBR",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/V-Ringe%20VA/V-Ringe%20VA%20NBR.csv?web=1"
+                  },
+                  {
+                    "name": "V-Ringe VA FKM",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/V-Ringe%20VA/V-Ringe%20VA%20FKM.csv?web=1"
+                  }
+                ]
+              },
+              {
+                "name": "V-Ringe VL",
+                "children": [
+                  {
+                    "name": "V-Ringe VL NBR",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/V-Ringe%20VL/V-Ringe%20VL%20NBR.csv?web=1"
+                  },
+                  {
+                    "name": "V-Ringe VL FKM",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/V-Ringe%20VL/V-Ringe%20VL%20FKM.csv?web=1"
+                  }
+                ]
+              },
+              {
+                "name": "V-Ringe VS",
+                "children": [
+                  {
+                    "name": "V-Ringe VS NBR",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/V-Ringe%20VS/V-Ringe%20VS%20NBR.csv?web=1"
+                  },
+                  {
+                    "name": "V-Ringe VS FKM",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/V-Ringe%20VS/V-Ringe%20VS%20FKM.csv?web=1"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Hydraulikdichtungen",
+        "children": [
+          {
+            "name": "Abstreifer",
+            "children": [
+              {
+                "name": "Abstreifer AM45",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Abstreifer/Abstreifer%20AM45.csv?web=1"
+              },
+              {
+                "name": "Abstreifer AE42",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Abstreifer/Abstreifer%20AE42.csv?web=1"
+              },
+              {
+                "name": "Abstreifer AE40",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Abstreifer/Abstreifer%20AE40.csv?web=1"
+              },
+              {
+                "name": "Abstreifer AE41",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Abstreifer/Abstreifer%20AE41.csv?web=1"
+              },
+              {
+                "name": "Abstreifer AM43",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Abstreifer/Abstreifer%20AM43.csv?web=1"
+              },
+              {
+                "name": "Abstreifer AM44",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Abstreifer/Abstreifer%20AM44.csv?web=1"
+              },
+              {
+                "name": "Abstreifer AM54",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Abstreifer/Abstreifer%20AM54.csv?web=1"
+              },
+              {
+                "name": "Abstreifer AE47",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Abstreifer/Abstreifer%20AE47.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Doppelabstreifer",
+            "children": [
+              {
+                "name": "Doppelabstreifer AD48",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Doppelabstreifer/Doppelabstreifer%20AD48.csv?web=1"
+              },
+              {
+                "name": "Doppelabstreifer AD51",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Doppelabstreifer/Doppelabstreifer%20AD51.csv?web=1"
+              },
+              {
+                "name": "Doppelabstreifer ADM55",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Doppelabstreifer/Doppelabstreifer%20ADM55.csv?web=1"
+              },
+              {
+                "name": "Doppelabstreifer AD61",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Doppelabstreifer/Doppelabstreifer%20AD61.csv?web=1"
+              },
+              {
+                "name": "Doppelabstreifer AD60",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Doppelabstreifer/Doppelabstreifer%20AD60.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Führungsbänder",
+            "children": [
+              {
+                "name": "Führungsbänder GS10",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/F%C3%BChrungsb%C3%A4nder/F%C3%BChrungsb%C3%A4nder%20GS10.csv?web=1"
+              },
+              {
+                "name": "Führungsbänder GS01",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/F%C3%BChrungsb%C3%A4nder/F%C3%BChrungsb%C3%A4nder%20GS01.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Kolbendichtungen (Hydraulik)",
+            "children": [
+              {
+                "name": "Kolbendichtungen KK03",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kolbendichtungen%20%28Hydraulik%29/Kolbendichtungen%20KK03.csv?web=1"
+              },
+              {
+                "name": "Kolbendichtungen KNA23",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kolbendichtungen%20%28Hydraulik%29/Kolbendichtungen%20KNA23.csv?web=1"
+              },
+              {
+                "name": "Kolbendichtungen KNA28",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kolbendichtungen%20%28Hydraulik%29/Kolbendichtungen%20KNA28.csv?web=1"
+              },
+              {
+                "name": "Kolbendichtungen KNA44",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kolbendichtungen%20%28Hydraulik%29/Kolbendichtungen%20KNA44.csv?web=1"
+              },
+              {
+                "name": "Kolbendichtungen KPOR30",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kolbendichtungen%20%28Hydraulik%29/Kolbendichtungen%20KPOR30.csv?web=1"
+              },
+              {
+                "name": "Kolbendichtungen KPOR31",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kolbendichtungen%20%28Hydraulik%29/Kolbendichtungen%20KPOR31.csv?web=1"
+              },
+              {
+                "name": "Kolbendichtungen K70",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kolbendichtungen%20%28Hydraulik%29/Kolbendichtungen%20K70.csv?web=1"
+              },
+              {
+                "name": "Kolbendichtungen K84",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kolbendichtungen%20%28Hydraulik%29/Kolbendichtungen%20K84.csv?web=1"
+              },
+              {
+                "name": "Kolbendichtungen KNA16",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kolbendichtungen%20%28Hydraulik%29/Kolbendichtungen%20KNA16.csv?web=1"
+              },
+              {
+                "name": "Kolbendichtungen KK22",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kolbendichtungen%20%28Hydraulik%29/Kolbendichtungen%20KK22.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Kolbenführungsringe",
+            "children": [
+              {
+                "name": "Kolbenführungsringe FRK05",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kolbenf%C3%BChrungsringe/Kolbenf%C3%BChrungsringe%20FRK05.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Radialdichtungen für Schwenkbewegung",
+            "children": [
+              {
+                "name": "Radialdichtungen RPORA 32",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Radialdichtungen%20f%C3%BCr%20Schwenkbewegung/Radialdichtungen%20RPORA%2032.csv?web=1"
+              },
+              {
+                "name": "Radialdichtungen RPORI 32",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Radialdichtungen%20f%C3%BCr%20Schwenkbewegung/Radialdichtungen%20RPORI%2032.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Stangendichtungen (Hydraulik)",
+            "children": [
+              {
+                "name": "Stangendichtungen N25",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangendichtungen%20%28Hydraulik%29/Stangendichtungen%20N25.csv?web=1"
+              },
+              {
+                "name": "Stangendichtungen N21",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangendichtungen%20%28Hydraulik%29/Stangendichtungen%20N21.csv?web=1"
+              },
+              {
+                "name": "Stangendichtungen N36",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangendichtungen%20%28Hydraulik%29/Stangendichtungen%20N36.csv?web=1"
+              },
+              {
+                "name": "Stangendichtungen SNI07",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangendichtungen%20%28Hydraulik%29/Stangendichtungen%20SNI07.csv?web=1"
+              },
+              {
+                "name": "Stangendichtungen SNI24",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangendichtungen%20%28Hydraulik%29/Stangendichtungen%20SNI24.csv?web=1"
+              },
+              {
+                "name": "Stangendichtungen SNI30",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangendichtungen%20%28Hydraulik%29/Stangendichtungen%20SNI30.csv?web=1"
+              },
+              {
+                "name": "Stangendichtungen SNI39",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangendichtungen%20%28Hydraulik%29/Stangendichtungen%20SNI39.csv?web=1"
+              },
+              {
+                "name": "Stangendichtungen SNI43",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangendichtungen%20%28Hydraulik%29/Stangendichtungen%20SNI43.csv?web=1"
+              },
+              {
+                "name": "Stangendichtungen S72",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangendichtungen%20%28Hydraulik%29/Stangendichtungen%20S72.csv?web=1"
+              },
+              {
+                "name": "Stangendichtungen SPOR130",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangendichtungen%20%28Hydraulik%29/Stangendichtungen%20SPOR130.csv?web=1"
+              },
+              {
+                "name": "Stangendichtungen SPOR30",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangendichtungen%20%28Hydraulik%29/Stangendichtungen%20SPOR30.csv?web=1"
+              },
+              {
+                "name": "Stangendichtungen SPOR31",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangendichtungen%20%28Hydraulik%29/Stangendichtungen%20SPOR31.csv?web=1"
+              },
+              {
+                "name": "Stangendichtungen SNI35",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangendichtungen%20%28Hydraulik%29/Stangendichtungen%20SNI35.csv?web=1"
+              },
+              {
+                "name": "Stangendichtungen N05",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangendichtungen%20%28Hydraulik%29/Stangendichtungen%20N05.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Stangenführungsringe",
+            "children": [
+              {
+                "name": "Stangenführungsringe FRS05",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangenf%C3%BChrungsringe/Stangenf%C3%BChrungsringe%20FRS05.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "V-Packungen",
+            "children": [
+              {
+                "name": "Dachmannschettensätze KDS01",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/V-Packungen/Dachmannschettens%C3%A4tze%20KDS01.csv?web=1"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "NILOS Ringe",
+        "children": [
+          {
+            "name": "NILOS Ringe Typ AV",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/NILOS%20Ringe/NILOS%20Ringe%20Typ%20AV.csv?web=1"
+          },
+          {
+            "name": "NILOS Ringe Typ JV",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/NILOS%20Ringe/NILOS%20Ringe%20Typ%20JV.csv?web=1"
+          },
+          {
+            "name": "NILOS Ringe Typ AK",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/NILOS%20Ringe/NILOS%20Ringe%20Typ%20AK.csv?web=1"
+          },
+          {
+            "name": "NILOS Ringe Typ ZAV",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/NILOS%20Ringe/NILOS%20Ringe%20Typ%20ZAV.csv?web=1"
+          },
+          {
+            "name": "NILOS Ringe Typ ZJV",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/NILOS%20Ringe/NILOS%20Ringe%20Typ%20ZJV.csv?web=1"
+          },
+          {
+            "name": "NILOS Ringe Typ AVH",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/NILOS%20Ringe/NILOS%20Ringe%20Typ%20AVH.csv?web=1"
+          },
+          {
+            "name": "NILOS Stahlscheibendichtungen LSTO",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/NILOS%20Ringe/NILOS%20Stahlscheibendichtungen%20LSTO.csv?web=1"
+          },
+          {
+            "name": "NILOS Distanzringe Typ A",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/NILOS%20Ringe/NILOS%20Distanzringe%20Typ%20A.csv?web=1"
+          },
+          {
+            "name": "NILOS Distanzringe Typ J",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/NILOS%20Ringe/NILOS%20Distanzringe%20Typ%20J.csv?web=1"
+          }
+        ]
+      },
+      {
+        "name": "Radialdichtungen",
+        "children": [
+          {
+            "name": "Verschlusskappen",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Radialdichtungen/Verschlusskappen.csv?web=1"
+          },
+          {
+            "name": "Wellen-Reparaturhülsen",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Radialdichtungen/Wellen-Reparaturh%C3%BClsen.csv?web=1"
+          },
+          {
+            "name": "Wellendichtringe",
+            "children": [
+              {
+                "name": "Wellendichtringe WBO, B1OF",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe/Wellendichtringe%20WBO%2C%20B1OF.csv?web=1"
+              },
+              {
+                "name": "Wellendichtringe WCS, B2SL",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe/Wellendichtringe%20WCS%2C%20B2SL.csv?web=1"
+              },
+              {
+                "name": "Wellendichtringe WAOK, BAOF",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe/Wellendichtringe%20WAOK%2C%20BAOF.csv?web=1"
+              },
+              {
+                "name": "Wellendichtringe WAO",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe/Wellendichtringe%20WAO.csv?web=1"
+              },
+              {
+                "name": "Wellendichtringe WAB",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe/Wellendichtringe%20WAB.csv?web=1"
+              },
+              {
+                "name": "Wellendichtringe WCXS",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe/Wellendichtringe%20WCXS.csv?web=1"
+              },
+              {
+                "name": "Wellendichtringe WAK",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe/Wellendichtringe%20WAK.csv?web=1"
+              },
+              {
+                "name": "Wellendichtringe WAY, BAB",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe/Wellendichtringe%20WAY%2C%20BAB.csv?web=1"
+              },
+              {
+                "name": "Wellendichtringe WAS, BASL",
+                "children": [
+                  {
+                    "name": "Wellendichtringe WAS, BASL",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe/Wellendichtringe%20WAS%2C%20BASL.csv?web=1"
+                  },
+                  {
+                    "name": "Wellendichtringe WAS NBR, BASL NBR",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe%20WAS%2C%20BASL/Wellendichtringe%20WAS%20NBR%2C%20BASL%20NBR.csv?web=1"
+                  },
+                  {
+                    "name": "Wellendichtringe WAS FKM, BASL FKM",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe%20WAS%2C%20BASL/Wellendichtringe%20WAS%20FKM%2C%20BASL%20FKM.csv?web=1"
+                  }
+                ]
+              },
+              {
+                "name": "Wellendichtringe WA, BA",
+                "children": [
+                  {
+                    "name": "Wellendichtringe WA NBR, BA NBR",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe%20WA%2C%20BA/Wellendichtringe%20WA%20NBR%2C%20BA%20NBR.csv?web=1"
+                  },
+                  {
+                    "name": "Wellendichtringe WA FKM, BA FKM",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe%20WA%2C%20BA/Wellendichtringe%20WA%20FKM%2C%20BA%20FKM.csv?web=1"
+                  }
+                ]
+              },
+              {
+                "name": "Wellendichtringe WASY, BABSL",
+                "children": [
+                  {
+                    "name": "Wellendichtringe WASY NBR, BABSL NBR",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe%20WASY%2C%20BABSL/Wellendichtringe%20WASY%20NBR%2C%20BABSL%20NBR.csv?web=1"
+                  },
+                  {
+                    "name": "Wellendichtringe WASY FKM, BABSL FKM",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe%20WASY%2C%20BABSL/Wellendichtringe%20WASY%20FKM%2C%20BABSL%20FKM.csv?web=1"
+                  }
+                ]
+              },
+              {
+                "name": "Wellendichtringe WB, B1",
+                "children": [
+                  {
+                    "name": "Wellendichtringe WB NBR, B1 NBR",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe%20WB%2C%20B1/Wellendichtringe%20WB%20NBR%2C%20B1%20NBR.csv?web=1"
+                  },
+                  {
+                    "name": "Wellendichtringe WB FKM, B1 FKM",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe%20WB%2C%20B1/Wellendichtringe%20WB%20FKM%2C%20B1%20FKM.csv?web=1"
+                  }
+                ]
+              },
+              {
+                "name": "Wellendichtringe WBS, B1SL",
+                "children": [
+                  {
+                    "name": "Wellendichtringe WBS NBR, B1SL NBR",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe%20WBS%2C%20B1SL/Wellendichtringe%20WBS%20NBR%2C%20B1SL%20NBR.csv?web=1"
+                  },
+                  {
+                    "name": "Wellendichtringe WBS FKM, B1SL FKM",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe%20WBS%2C%20B1SL/Wellendichtringe%20WBS%20FKM%2C%20B1SL%20FKM.csv?web=1"
+                  }
+                ]
+              },
+              {
+                "name": "Wellendichtringe WC, B2",
+                "children": [
+                  {
+                    "name": "Wellendichtringe WC NBR, B2 NBR",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe%20WC%2C%20B2/Wellendichtringe%20WC%20NBR%2C%20B2%20NBR.csv?web=1"
+                  },
+                  {
+                    "name": "Wellendichtringe WC FKM, B2 FKM",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe%20WC%2C%20B2/Wellendichtringe%20WC%20FKM%2C%20B2%20FKM.csv?web=1"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "statische Dichtungen",
+        "children": [
+          {
+            "name": "O-Ringe BIB",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/statische%20Dichtungen/O-Ringe%20BIB.csv?web=1"
+          },
+          {
+            "name": "O-Ringe",
+            "children": [
+              {
+                "name": "O-Ringe NBR",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/O-Ringe/O-Ringe%20NBR.csv?web=1"
+              },
+              {
+                "name": "O-Ringe EPDM",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/O-Ringe/O-Ringe%20EPDM.csv?web=1"
+              },
+              {
+                "name": "O-Ringe FKM",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/O-Ringe/O-Ringe%20FKM.csv?web=1"
+              },
+              {
+                "name": "O-Ringe VMQ",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/O-Ringe/O-Ringe%20VMQ.csv?web=1"
+              },
+              {
+                "name": "O-Ringe HNBR",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/O-Ringe/O-Ringe%20HNBR.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "O-Ringe ummantelt",
+            "children": [
+              {
+                "name": "O-Ringe ummantelt FEP-V",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/O-Ringe%20ummantelt/O-Ringe%20ummantelt%20FEP-V.csv?web=1"
+              },
+              {
+                "name": "O-Ringe ummantelt FEP-F",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/O-Ringe%20ummantelt/O-Ringe%20ummantelt%20FEP-F.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Rundschnüre",
+            "children": [
+              {
+                "name": "Rundschnüre NBR",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rundschn%C3%BCre/Rundschn%C3%BCre%20NBR.csv?web=1"
+              },
+              {
+                "name": "Rundschnüre FKM",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rundschn%C3%BCre/Rundschn%C3%BCre%20FKM.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "X-Ringe",
+            "children": [
+              {
+                "name": "X-Ringe NBR",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/X-Ringe/X-Ringe%20NBR.csv?web=1"
+              },
+              {
+                "name": "X-Ringe FKM",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/X-Ringe/X-Ringe%20FKM.csv?web=1"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Elektromotoren",
+    "children": [
+      {
+        "name": "Elektromotoren",
+        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Elektromotoren/Elektromotoren.csv?web=1"
+      }
+    ]
+  },
+  {
+    "name": "Schmiertechnik",
+    "children": [
+      {
+        "name": "Belüftungsfilter und Entlüftungsfilter",
+        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schmiertechnik/Bel%C3%BCftungsfilter%20und%20Entl%C3%BCftungsfilter.csv?web=1"
+      },
+      {
+        "name": "Schmiertechnik",
+        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schmiertechnik/Schmiertechnik.csv?web=1"
+      }
+    ]
+  },
+  {
+    "name": "Schwingungsdämpfer",
+    "children": [
+      {
+        "name": "Maschinenfüße und Gerätefüße",
+        "children": [
+          {
+            "name": "Gerätefüße",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Maschinenf%C3%BC%C3%9Fe%20und%20Ger%C3%A4tef%C3%BC%C3%9Fe/Ger%C3%A4tef%C3%BC%C3%9Fe.csv?web=1"
+          },
+          {
+            "name": "Maschinenfüße",
+            "children": [
+              {
+                "name": "Maschinenfüße Edelstahl verchromt",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Maschinenf%C3%BC%C3%9Fe/Maschinenf%C3%BC%C3%9Fe%20Edelstahl%20verchromt.csv?web=1"
+              },
+              {
+                "name": "Maschinenfüße Edelstahl verzinkt",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Maschinenf%C3%BC%C3%9Fe/Maschinenf%C3%BC%C3%9Fe%20Edelstahl%20verzinkt.csv?web=1"
+              },
+              {
+                "name": "Maschinenfüße Edelstahl",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Maschinenf%C3%BC%C3%9Fe/Maschinenf%C3%BC%C3%9Fe%20Edelstahl.csv?web=1"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Schwerlastlager",
+        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schwingungsd%C3%A4mpfer/Schwerlastlager.csv?web=1"
+      },
+      {
+        "name": "Niederfrequenzlager",
+        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schwingungsd%C3%A4mpfer/Niederfrequenzlager.csv?web=1"
+      },
+      {
+        "name": "Anschlagpuffer",
+        "children": [
+          {
+            "name": "Anschlagpuffer konisch",
+            "children": [
+              {
+                "name": "Anschlagpuffer konisch Außengewinde",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Anschlagpuffer%20konisch/Anschlagpuffer%20konisch%20Au%C3%9Fengewinde.csv?web=1"
+              },
+              {
+                "name": "Anschlagpuffer konisch Innengewinde",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Anschlagpuffer%20konisch/Anschlagpuffer%20konisch%20Innengewinde.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Gummi-Metall-Anschlagpuffer",
+            "children": [
+              {
+                "name": "Gummi-Metall-Anschlagpuffer Außengewinde",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gummi-Metall-Anschlagpuffer/Gummi-Metall-Anschlagpuffer%20Au%C3%9Fengewinde.csv?web=1"
+              },
+              {
+                "name": "Gummi-Metall-Anschlagpuffer Innengewinde",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gummi-Metall-Anschlagpuffer/Gummi-Metall-Anschlagpuffer%20Innengewinde.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Kranbahnanschläge",
+            "children": [
+              {
+                "name": "Kranbahnanschläge Außengewinde",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kranbahnanschl%C3%A4ge/Kranbahnanschl%C3%A4ge%20Au%C3%9Fengewinde.csv?web=1"
+              },
+              {
+                "name": "Kranbahnanschläge Innengewinde",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kranbahnanschl%C3%A4ge/Kranbahnanschl%C3%A4ge%20Innengewinde.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Parabelfedern",
+            "children": [
+              {
+                "name": "Parabelfedern Außengewinde",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Parabelfedern/Parabelfedern%20Au%C3%9Fengewinde.csv?web=1"
+              },
+              {
+                "name": "Parabelfedern Innengewinde",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Parabelfedern/Parabelfedern%20Innengewinde.csv?web=1"
+              },
+              {
+                "name": "Parabelfedern Außengewinde Edelstahl",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Parabelfedern/Parabelfedern%20Au%C3%9Fengewinde%20Edelstahl.csv?web=1"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Gummi-Metall-Puffer",
+        "children": [
+          {
+            "name": "Gummi-Metall-Puffer Typ-4 (D)",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gummi-Metall-Puffer/Gummi-Metall-Puffer%20Typ-4%20%28D%29.csv?web=1"
+          },
+          {
+            "name": "Gummi-Metall-Puffer Typ-1 (A)",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gummi-Metall-Puffer/Gummi-Metall-Puffer%20Typ-1%20%28A%29.csv?web=1"
+          },
+          {
+            "name": "Gummi-Metall-Puffer Typ-2 (B)",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gummi-Metall-Puffer/Gummi-Metall-Puffer%20Typ-2%20%28B%29.csv?web=1"
+          },
+          {
+            "name": "Gummi-Metall-Puffer Typ-5 (E)",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gummi-Metall-Puffer/Gummi-Metall-Puffer%20Typ-5%20%28E%29.csv?web=1"
+          },
+          {
+            "name": "Gummi-Metall-Puffer Typ-3 (C)",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gummi-Metall-Puffer/Gummi-Metall-Puffer%20Typ-3%20%28C%29.csv?web=1"
+          },
+          {
+            "name": "Gummi-Metall-Puffer Typ-2 (B) Edelstahl",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gummi-Metall-Puffer/Gummi-Metall-Puffer%20Typ-2%20%28B%29%20Edelstahl.csv?web=1"
+          },
+          {
+            "name": "Gummi-Metall-Puffer Typ-4 (D) Edelstahl",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gummi-Metall-Puffer/Gummi-Metall-Puffer%20Typ-4%20%28D%29%20Edelstahl.csv?web=1"
+          },
+          {
+            "name": "Gummi-Metall-Puffer Typ-3 (C) Edelstahl",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gummi-Metall-Puffer/Gummi-Metall-Puffer%20Typ-3%20%28C%29%20Edelstahl.csv?web=1"
+          },
+          {
+            "name": "Gummi-Metall-Puffer Typ-1 (A) Edelstahl",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gummi-Metall-Puffer/Gummi-Metall-Puffer%20Typ-1%20%28A%29%20Edelstahl.csv?web=1"
+          },
+          {
+            "name": "Gummi-Metall-Puffer Typ-5 (E) Edelstahl",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gummi-Metall-Puffer/Gummi-Metall-Puffer%20Typ-5%20%28E%29%20Edelstahl.csv?web=1"
+          }
+        ]
+      },
+      {
+        "name": "Gummi-Metall-Puffer mit Bodenplatte",
+        "children": [
+          {
+            "name": "Gummi-Metall-Puffer mit Bodenplatte oval",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gummi-Metall-Puffer%20mit%20Bodenplatte/Gummi-Metall-Puffer%20mit%20Bodenplatte%20oval.csv?web=1"
+          },
+          {
+            "name": "Gummi-Metall-Puffer mit Bodenplatte quadratisch",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gummi-Metall-Puffer%20mit%20Bodenplatte/Gummi-Metall-Puffer%20mit%20Bodenplatte%20quadratisch.csv?web=1"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Verbindungselemente",
+    "children": [
+      {
+        "name": "Maschinenelemente",
+        "children": [
+          {
+            "name": "DIN 6885 Passfedern",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Maschinenelemente/DIN%206885%20Passfedern.csv?web=1"
+          }
+        ]
+      },
+      {
+        "name": "Sicherungselemente",
+        "children": [
+          {
+            "name": "Sicherungselemente für Wellen",
+            "children": [
+              {
+                "name": "Sicherungsringe DIN 471",
+                "children": [
+                  {
+                    "name": "Sicherungsringe DIN 471 Federstahl verzinkt",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Sicherungsringe%20DIN%20471/Sicherungsringe%20DIN%20471%20Federstahl%20verzinkt.csv?web=1"
+                  }
+                ]
+              },
+              {
+                "name": "Sicherungsringe DIN 472",
+                "children": [
+                  {
+                    "name": "Sicherungsringe DIN 471 Federstahl",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Sicherungsringe%20DIN%20471/Sicherungsringe%20DIN%20471%20Federstahl.csv?web=1"
+                  }
+                ]
+              },
+              {
+                "name": "Sicherungsringe DIN 473",
+                "children": [
+                  {
+                    "name": "Sicherungsringe DIN 471 verstärkt Federstahl",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Sicherungsringe%20DIN%20471/Sicherungsringe%20DIN%20471%20verst%C3%A4rkt%20Federstahl.csv?web=1"
+                  }
+                ]
+              },
+              {
+                "name": "Sicherungsringe DIN 474",
+                "children": [
+                  {
+                    "name": "Sicherungsringe DIN 471 Edelstahl",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Sicherungsringe%20DIN%20471/Sicherungsringe%20DIN%20471%20Edelstahl.csv?web=1"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Sicherungselemente für Bohrungen",
+            "children": [
+              {
+                "name": "DIN 472 Sicherungsringe",
+                "children": [
+                  {
+                    "name": "Sicherungsringe DIN 472 Federstahl",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/DIN%20472%20Sicherungsringe/Sicherungsringe%20DIN%20472%20Federstahl.csv?web=1"
+                  },
+                  {
+                    "name": "Sicherungsringe DIN 472 Edelstahl",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/DIN%20472%20Sicherungsringe/Sicherungsringe%20DIN%20472%20Edelstahl.csv?web=1"
+                  },
+                  {
+                    "name": "Sicherungsringe DIN 472 Federstahl verzinkt",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/DIN%20472%20Sicherungsringe/Sicherungsringe%20DIN%20472%20Federstahl%20verzinkt.csv?web=1"
+                  },
+                  {
+                    "name": "Sicherungsringe DIN 472 verstärkt Federstahl",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/DIN%20472%20Sicherungsringe/Sicherungsringe%20DIN%20472%20verst%C3%A4rkt%20Federstahl.csv?web=1"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Wälz- und Gleitlager",
+    "children": [
+      {
+        "name": "Gehäuse-Reparaturhülsen HR-Sleeves",
+        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/W%C3%A4lz-%20und%20Gleitlager/Geh%C3%A4use-Reparaturh%C3%BClsen%20HR-Sleeves.csv?web=1"
+      },
+      {
+        "name": "Freiläufe",
+        "children": [
+          {
+            "name": "Hülsenfreiläufe",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Freil%C3%A4ufe/H%C3%BClsenfreil%C3%A4ufe.csv?web=1"
+          }
+        ]
+      },
+      {
+        "name": "Gleitlager",
+        "children": [
+          {
+            "name": "Anlaufscheiben",
+            "children": [
+              {
+                "name": "Anlaufscheiben P10",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Anlaufscheiben/Anlaufscheiben%20P10.csv?web=1"
+              },
+              {
+                "name": "Anlaufscheiben P20",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Anlaufscheiben/Anlaufscheiben%20P20.csv?web=1"
+              },
+              {
+                "name": "Anlaufscheiben P14",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Anlaufscheiben/Anlaufscheiben%20P14.csv?web=1"
+              },
+              {
+                "name": "Anlaufscheiben P200",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Anlaufscheiben/Anlaufscheiben%20P200.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Gleitlagerbuchsen",
+            "children": [
+              {
+                "name": "Gleitlagerbuchsen P10",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gleitlagerbuchsen/Gleitlagerbuchsen%20P10.csv?web=1"
+              },
+              {
+                "name": "Gleitlagerbuchsen P11",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gleitlagerbuchsen/Gleitlagerbuchsen%20P11.csv?web=1"
+              },
+              {
+                "name": "Gleitlagerbuchsen P20",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gleitlagerbuchsen/Gleitlagerbuchsen%20P20.csv?web=1"
+              },
+              {
+                "name": "Gleitlagerbuchsen P14",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gleitlagerbuchsen/Gleitlagerbuchsen%20P14.csv?web=1"
+              },
+              {
+                "name": "Gleitlagerbuchsen P200",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gleitlagerbuchsen/Gleitlagerbuchsen%20P200.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Gleitlagerbundbuchsen",
+            "children": [
+              {
+                "name": "Gleitlagerbundbuchsen P10",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gleitlagerbundbuchsen/Gleitlagerbundbuchsen%20P10.csv?web=1"
+              },
+              {
+                "name": "Gleitlagerbundbuchsen P11",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gleitlagerbundbuchsen/Gleitlagerbundbuchsen%20P11.csv?web=1"
+              },
+              {
+                "name": "Gleitlagerbundbuchsen P14",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gleitlagerbundbuchsen/Gleitlagerbundbuchsen%20P14.csv?web=1"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Hochgenauigkeitslager",
+        "children": [
+          {
+            "name": "Spindellager",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Hochgenauigkeitslager/Spindellager.csv?web=1"
+          }
+        ]
+      },
+      {
+        "name": "Kugellager",
+        "children": [
+          {
+            "name": "Schulterkugellager",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kugellager/Schulterkugellager.csv?web=1"
+          },
+          {
+            "name": "Axial-Rillenkugellager",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kugellager/Axial-Rillenkugellager.csv?web=1"
+          },
+          {
+            "name": "Vierpunktlager",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kugellager/Vierpunktlager.csv?web=1"
+          },
+          {
+            "name": "Pendelkugellager",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kugellager/Pendelkugellager.csv?web=1"
+          },
+          {
+            "name": "Rillenkugellager",
+            "children": [
+              {
+                "name": "Rillenkugellager Standard",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rillenkugellager/Rillenkugellager%20Standard.csv?web=1"
+              },
+              {
+                "name": "Rillenkugellager für hohe und tiefe Temperaturen",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rillenkugellager/Rillenkugellager%20f%C3%BCr%20hohe%20und%20tiefe%20Temperaturen.csv?web=1"
+              },
+              {
+                "name": "Rillenkugellager für hohe Drehzahlen",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rillenkugellager/Rillenkugellager%20f%C3%BCr%20hohe%20Drehzahlen.csv?web=1"
+              },
+              {
+                "name": "Rillenkugellager zöllig",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rillenkugellager/Rillenkugellager%20z%C3%B6llig.csv?web=1"
+              },
+              {
+                "name": "Rillenkugellager einreihig Festschmierstoff",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rillenkugellager/Rillenkugellager%20einreihig%20Festschmierstoff.csv?web=1"
+              },
+              {
+                "name": "Rillenkugellager kegelige Bohrung",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rillenkugellager/Rillenkugellager%20kegelige%20Bohrung.csv?web=1"
+              },
+              {
+                "name": "Rillenkugellager nichtrostend",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rillenkugellager/Rillenkugellager%20nichtrostend.csv?web=1"
+              },
+              {
+                "name": "Rillenkugellager zweireihig",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rillenkugellager/Rillenkugellager%20zweireihig.csv?web=1"
+              },
+              {
+                "name": "Rillenkugellager energieeffizient",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rillenkugellager/Rillenkugellager%20energieeffizient.csv?web=1"
+              },
+              {
+                "name": "Rillenkugellager stromisoliert",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rillenkugellager/Rillenkugellager%20stromisoliert.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Schrägkugellager",
+            "children": [
+              {
+                "name": "Schrägkugellager zweireihig",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schr%C3%A4gkugellager/Schr%C3%A4gkugellager%20zweireihig.csv?web=1"
+              },
+              {
+                "name": "Schrägkugellager einreihig",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schr%C3%A4gkugellager/Schr%C3%A4gkugellager%20einreihig.csv?web=1"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Lagergehäuse zweiteilig",
+        "children": [
+          {
+            "name": "Stehlagergehäuse zweiteilig",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Lagergeh%C3%A4use%20zweiteilig/Stehlagergeh%C3%A4use%20zweiteilig.csv?web=1"
+          },
+          {
+            "name": "Gehäusedeckel",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Lagergeh%C3%A4use%20zweiteilig/Geh%C3%A4usedeckel.csv?web=1"
+          },
+          {
+            "name": "Dichtungssätze",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Lagergeh%C3%A4use%20zweiteilig/Dichtungss%C3%A4tze.csv?web=1"
+          },
+          {
+            "name": "Festringe",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Lagergeh%C3%A4use%20zweiteilig/Festringe.csv?web=1"
+          },
+          {
+            "name": "Fettreglerscheiben",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Lagergeh%C3%A4use%20zweiteilig/Fettreglerscheiben.csv?web=1"
+          }
+        ]
+      },
+      {
+        "name": "Laufrollen, Stützrollen, Kurvenrollen",
+        "children": [
+          {
+            "name": "Kurvenrollen",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Laufrollen%2C%20St%C3%BCtzrollen%2C%20Kurvenrollen/Kurvenrollen.csv?web=1"
+          },
+          {
+            "name": "Stützrollen",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Laufrollen%2C%20St%C3%BCtzrollen%2C%20Kurvenrollen/St%C3%BCtzrollen.csv?web=1"
+          },
+          {
+            "name": "Laufrollen",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Laufrollen%2C%20St%C3%BCtzrollen%2C%20Kurvenrollen/Laufrollen.csv?web=1"
+          }
+        ]
+      },
+      {
+        "name": "Nadellager",
+        "children": [
+          {
+            "name": "Nadelhülsen",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Nadellager/Nadelh%C3%BClsen.csv?web=1"
+          },
+          {
+            "name": "Nadelbüchsen",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Nadellager/Nadelb%C3%BCchsen.csv?web=1"
+          },
+          {
+            "name": "Nadellager massiv",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Nadellager/Nadellager%20massiv.csv?web=1"
+          },
+          {
+            "name": "Innenringe",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Nadellager/Innenringe.csv?web=1"
+          },
+          {
+            "name": "Axial-Nadellager",
+            "children": [
+              {
+                "name": "Axialscheiben",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Axial-Nadellager/Axialscheiben.csv?web=1"
+              },
+              {
+                "name": "Axial-Nadelkränze",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Axial-Nadellager/Axial-Nadelkr%C3%A4nze.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Kombinierte Axial-/ Radialnadellager",
+            "children": [
+              {
+                "name": "Nadel-Schrägkugellager",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kombinierte%20Axial%20oder%20Radialnadellager/Nadel-Schr%C3%A4gkugellager.csv?web=1"
+              },
+              {
+                "name": "Nadel-Axial-Kugellager",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kombinierte%20Axial%20oder%20Radialnadellager/Nadel-Axial-Kugellager.csv?web=1"
+              },
+              {
+                "name": "Nadel-Axial-Zylinderrollenlager",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kombinierte%20Axial%20oder%20Radialnadellager/Nadel-Axial-Zylinderrollenlager.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Nadelkränze",
+            "children": [
+              {
+                "name": "Nadelkränze",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Nadelkr%C3%A4nze/Nadelkr%C3%A4nze.csv?web=1"
+              },
+              {
+                "name": "Nadelkränze für Pleuel",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Nadelkr%C3%A4nze/Nadelkr%C3%A4nze%20f%C3%BCr%20Pleuel.csv?web=1"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Rollenlager",
+        "children": [
+          {
+            "name": "Zylinderrollenlager",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rollenlager/Zylinderrollenlager.csv?web=1"
+          },
+          {
+            "name": "Pendelrollenlager",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rollenlager/Pendelrollenlager.csv?web=1"
+          },
+          {
+            "name": "Axial-Pendelrollenlager",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rollenlager/Axial-Pendelrollenlager.csv?web=1"
+          },
+          {
+            "name": "Axial-Zylinderrollenlager",
+            "children": [
+              {
+                "name": "Axial-Zylinderrollenlager komplett",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Axial-Zylinderrollenlager/Axial-Zylinderrollenlager%20komplett.csv?web=1"
+              },
+              {
+                "name": "Gehäusescheiben",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Axial-Zylinderrollenlager/Geh%C3%A4usescheiben.csv?web=1"
+              },
+              {
+                "name": "Axial-Zylinderrollenkränze",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Axial-Zylinderrollenlager/Axial-Zylinderrollenkr%C3%A4nze.csv?web=1"
+              },
+              {
+                "name": "Wellenscheiben",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Axial-Zylinderrollenlager/Wellenscheiben.csv?web=1"
+              }
+            ]
+          },
+          {
+            "name": "Kegelrollenlager",
+            "children": [
+              {
+                "name": "Kegelrollenlager metrisch",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kegelrollenlager/Kegelrollenlager%20metrisch.csv?web=1"
+              },
+              {
+                "name": "Kegelrollenlager zöllig",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kegelrollenlager/Kegelrollenlager%20z%C3%B6llig.csv?web=1"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Rollenlagereinheiten",
+        "children": [
+          {
+            "name": "Flanschlagereinheiten für Pendelrollenlager",
+            "children": [
+              {
+                "name": "Flanschlagereinheiten CS4F, CXC4F",
+                "children": [
+                  {
+                    "name": "Flanschlagereinheiten CS4F",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Flanschlagereinheiten%20CS4F%2C%20CXC4F/Flanschlagereinheiten%20CS4F.csv?web=1"
+                  },
+                  {
+                    "name": "Flanschlagereinheiten CXC4F",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Flanschlagereinheiten%20CS4F%2C%20CXC4F/Flanschlagereinheiten%20CXC4F.csv?web=1"
+                  }
+                ]
+              },
+              {
+                "name": "Flanschlagereinheiten CS4FC, CXC4FC",
+                "children": [
+                  {
+                    "name": "Flanschlagereinheiten CS4FC",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Flanschlagereinheiten%20CS4FC%2C%20CXC4FC/Flanschlagereinheiten%20CS4FC.csv?web=1"
+                  },
+                  {
+                    "name": "Flanschlagereinheiten CXC4FC",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Flanschlagereinheiten%20CS4FC%2C%20CXC4FC/Flanschlagereinheiten%20CXC4FC.csv?web=1"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Schutzkappen für Rollenlagereinheiten",
+            "children": [
+              {
+                "name": "Schutzkappen für Rollenlagereinheiten geschlossen",
+                "children": [
+                  {
+                    "name": "Schutzkappen COC Baureihe SSD",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schutzkappen%20f%C3%BCr%20Rollenlagereinheiten%20geschlossen/Schutzkappen%20COC%20Baureihe%20SSD.csv?web=1"
+                  }
+                ]
+              },
+              {
+                "name": "Schutzkappen für Rollenlagereinheiten offen",
+                "children": [
+                  {
+                    "name": "Schutzkappen COC Baureihe SSC",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schutzkappen%20f%C3%BCr%20Rollenlagereinheiten%20offen/Schutzkappen%20COC%20Baureihe%20SSC.csv?web=1"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Stehlagereinheiten für Pendelrollenlager",
+            "children": [
+              {
+                "name": "Stehlagereinheiten CX2SN",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlagereinheiten%20f%C3%BCr%20Pendelrollenlager/Stehlagereinheiten%20CX2SN.csv?web=1"
+              },
+              {
+                "name": "Stehlagereinheiten CX2SAF",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlagereinheiten%20f%C3%BCr%20Pendelrollenlager/Stehlagereinheiten%20CX2SAF.csv?web=1"
+              },
+              {
+                "name": "Stehlagereinheiten CX4SAF",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlagereinheiten%20f%C3%BCr%20Pendelrollenlager/Stehlagereinheiten%20CX4SAF.csv?web=1"
+              },
+              {
+                "name": "Stehlagereinheiten CS2EP, CXC2EP",
+                "children": [
+                  {
+                    "name": "Stehlagereinheiten CS2EP",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlagereinheiten%20CS2EP%2C%20CXC2EP/Stehlagereinheiten%20CS2EP.csv?web=1"
+                  },
+                  {
+                    "name": "Stehlagereinheiten CXC2EP",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlagereinheiten%20CS2EP%2C%20CXC2EP/Stehlagereinheiten%20CXC2EP.csv?web=1"
+                  }
+                ]
+              },
+              {
+                "name": "Stehlagereinheiten CS2P, CXC2P",
+                "children": [
+                  {
+                    "name": "Stehlagereinheiten CS2P",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlagereinheiten%20CS2P%2C%20CXC2P/Stehlagereinheiten%20CS2P.csv?web=1"
+                  },
+                  {
+                    "name": "Stehlagereinheiten CXC2P",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlagereinheiten%20CS2P%2C%20CXC2P/Stehlagereinheiten%20CXC2P.csv?web=1"
+                  }
+                ]
+              },
+              {
+                "name": "Stehlagereinheiten CS4EP, CXC4EP",
+                "children": [
+                  {
+                    "name": "Stehlagereinheiten CXC4EP",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlagereinheiten%20CS4EP%2C%20CXC4EP/Stehlagereinheiten%20CXC4EP.csv?web=1"
+                  },
+                  {
+                    "name": "Stehlagereinheiten CS4EP",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlagereinheiten%20CS4EP%2C%20CXC4EP/Stehlagereinheiten%20CS4EP.csv?web=1"
+                  }
+                ]
+              },
+              {
+                "name": "Stehlagereinheiten CS4P, CXC4P",
+                "children": [
+                  {
+                    "name": "Stehlagereinheiten CXC4P",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlagereinheiten%20CS4P%2C%20CXC4P/Stehlagereinheiten%20CXC4P.csv?web=1"
+                  },
+                  {
+                    "name": "Stehlagereinheiten CS4P",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlagereinheiten%20CS4P%2C%20CXC4P/Stehlagereinheiten%20CS4P.csv?web=1"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Spannlager, Gehäuselager-Einheiten",
+        "children": [
+          {
+            "name": "Spannlager",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Spannlager%2C%20Geh%C3%A4uselager-Einheiten/Spannlager.csv?web=1"
+          },
+          {
+            "name": "Schutzkappen für Spannlagereinheiten",
+            "children": [
+              {
+                "name": "Schutzkappen für Spannlagereinheiten geschlossen",
+                "children": [
+                  {
+                    "name": "Schutzkappen SNR Baureihe SCC",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schutzkappen%20f%C3%BCr%20Spannlagereinheiten%20geschlossen/Schutzkappen%20SNR%20Baureihe%20SCC.csv?web=1"
+                  },
+                  {
+                    "name": "Schutzkappen SNR Baureihe SCCE",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schutzkappen%20f%C3%BCr%20Spannlagereinheiten%20geschlossen/Schutzkappen%20SNR%20Baureihe%20SCCE.csv?web=1"
+                  },
+                  {
+                    "name": "Schutzkappen SNR Baureihe CF",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schutzkappen%20f%C3%BCr%20Spannlagereinheiten%20geschlossen/Schutzkappen%20SNR%20Baureihe%20CF.csv?web=1"
+                  },
+                  {
+                    "name": "Schutzkappen COC Baureihe SD",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schutzkappen%20f%C3%BCr%20Spannlagereinheiten%20geschlossen/Schutzkappen%20COC%20Baureihe%20SD.csv?web=1"
+                  }
+                ]
+              },
+              {
+                "name": "Schutzkappen für Spannlagereinheiten offen",
+                "children": [
+                  {
+                    "name": "Schutzkappen NTN Baureihe S",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schutzkappen%20f%C3%BCr%20Spannlagereinheiten%20offen/Schutzkappen%20NTN%20Baureihe%20S.csv?web=1"
+                  },
+                  {
+                    "name": "Schutzkappen SNR Baureihe SCO",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schutzkappen%20f%C3%BCr%20Spannlagereinheiten%20offen/Schutzkappen%20SNR%20Baureihe%20SCO.csv?web=1"
+                  },
+                  {
+                    "name": "Schutzkappen SNR Baureihe CV",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schutzkappen%20f%C3%BCr%20Spannlagereinheiten%20offen/Schutzkappen%20SNR%20Baureihe%20CV.csv?web=1"
+                  },
+                  {
+                    "name": "Schutzkappen SNR Baureihe SCOE",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schutzkappen%20f%C3%BCr%20Spannlagereinheiten%20offen/Schutzkappen%20SNR%20Baureihe%20SCOE.csv?web=1"
+                  },
+                  {
+                    "name": "Schutzkappen SNR Baureihe SCOU",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schutzkappen%20f%C3%BCr%20Spannlagereinheiten%20offen/Schutzkappen%20SNR%20Baureihe%20SCOU.csv?web=1"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Spannlagereinheiten",
+            "children": [
+              {
+                "name": "Flanschlager-Gehäuseeinheiten",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Spannlagereinheiten/Flanschlager-Geh%C3%A4useeinheiten.csv?web=1"
+              },
+              {
+                "name": "Stehlager-Gehäuseeinheiten",
+                "children": [
+                  {
+                    "name": "Stehlager-Gehäuseeinheiten",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Spannlagereinheiten/Stehlager-Geh%C3%A4useeinheiten.csv?web=1"
+                  },
+                  {
+                    "name": "Stehlager-Gehäuseeinheiten Bauform PP",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PP.csv?web=1"
+                  },
+                  {
+                    "name": "Stehlager-Gehäuseeinheiten Bauform PH, HP",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PH%2C%20HP.csv?web=1"
+                  },
+                  {
+                    "name": "Stehlager-Gehäuseeinheiten Bauform PA, UP",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PA%2C%20UP.csv?web=1"
+                  },
+                  {
+                    "name": "Stehlager-Gehäuseeinheiten Bauform PX",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PX.csv?web=1"
+                  },
+                  {
+                    "name": "Stehlager-Gehäuseeinheiten Bauform PE",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PE.csv?web=1"
+                  },
+                  {
+                    "name": "Stehlager-Gehäuseeinheiten Bauform PAE",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PAE.csv?web=1"
+                  },
+                  {
+                    "name": "Stehlager-Gehäuseeinheiten Bauform PG",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PG.csv?web=1"
+                  },
+                  {
+                    "name": "Stehlager-Gehäuseeinheiten Bauform PLE",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PLE.csv?web=1"
+                  },
+                  {
+                    "name": "Stehlager-Gehäuseeinheiten Bauform PEX",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PEX.csv?web=1"
+                  },
+                  {
+                    "name": "Stehlager-Gehäuseeinheiten Bauform P",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20P.csv?web=1"
+                  }
+                ]
+              },
+              {
+                "name": "Spann-Gehäuseeinheiten",
+                "children": [
+                  {
+                    "name": "Spann-Gehäuseeinheiten",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Spannlagereinheiten/Spann-Geh%C3%A4useeinheiten.csv?web=1"
+                  },
+                  {
+                    "name": "Schiebelager Gehäuseeinheiten Bauform C",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Spann-Geh%C3%A4useeinheiten/Schiebelager%20Geh%C3%A4useeinheiten%20Bauform%20C.csv?web=1"
+                  }
+                ]
+              },
+              {
+                "name": "Hängelager Gehäuseeinheit",
+                "children": [
+                  {
+                    "name": "Hängelager Gehäuseeinheiten Bauform HB",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/H%C3%A4ngelager%20Geh%C3%A4useeinheit/H%C3%A4ngelager%20Geh%C3%A4useeinheiten%20Bauform%20HB.csv?web=1"
+                  },
+                  {
+                    "name": "Hängelager Gehäuseeinheiten Bauform HE, EHE",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/H%C3%A4ngelager%20Geh%C3%A4useeinheit/H%C3%A4ngelager%20Geh%C3%A4useeinheiten%20Bauform%20HE%2C%20EHE.csv?web=1"
+                  }
+                ]
+              },
+              {
+                "name": "Spann-Gehäuseeinheiten FOOD",
+                "children": [
+                  {
+                    "name": "Spann-Gehäuseeinheiten FOOD Bauform T",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Spann-Geh%C3%A4useeinheiten%20FOOD/Spann-Geh%C3%A4useeinheiten%20FOOD%20Bauform%20T.csv?web=1"
+                  }
+                ]
+              },
+              {
+                "name": "Stehlager-Gehäuseeinheiten FOOD",
+                "children": [
+                  {
+                    "name": "Stehlager-Gehäuseeinheiten FOOD Bauform SP",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten%20FOOD/Stehlager-Geh%C3%A4useeinheiten%20FOOD%20Bauform%20SP.csv?web=1"
+                  },
+                  {
+                    "name": "Stehlager-Gehäuseeinheiten FOOD Bauform SPA",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten%20FOOD/Stehlager-Geh%C3%A4useeinheiten%20FOOD%20Bauform%20SPA.csv?web=1"
+                  },
+                  {
+                    "name": "Stehlager-Gehäuseeinheiten FOOD Bauform SP Saniline",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten%20FOOD/Stehlager-Geh%C3%A4useeinheiten%20FOOD%20Bauform%20SP%20Saniline.csv?web=1"
+                  },
+                  {
+                    "name": "Stehlager-Gehäuseeinheiten FOOD Bauform SHP Saniline",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten%20FOOD/Stehlager-Geh%C3%A4useeinheiten%20FOOD%20Bauform%20SHP%20Saniline.csv?web=1"
+                  },
+                  {
+                    "name": "Stehlager-Gehäuseeinheiten FOOD Bauform SHPA Saniline",
+                    "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten%20FOOD/Stehlager-Geh%C3%A4useeinheiten%20FOOD%20Bauform%20SHPA%20Saniline.csv?web=1"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Spannlagergehäuse",
+            "children": [
+              {
+                "name": "Stehlagergehäuse",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Spannlagergeh%C3%A4use/Stehlagergeh%C3%A4use.csv?web=1"
+              },
+              {
+                "name": "Flanschlagergehäuse",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Spannlagergeh%C3%A4use/Flanschlagergeh%C3%A4use.csv?web=1"
+              },
+              {
+                "name": "Hängelagergehäuse",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Spannlagergeh%C3%A4use/H%C3%A4ngelagergeh%C3%A4use.csv?web=1"
+              },
+              {
+                "name": "Spanngehäuse",
+                "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Spannlagergeh%C3%A4use/Spanngeh%C3%A4use.csv?web=1"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Wälzlagerzubehör",
+        "children": [
+          {
+            "name": "Spannhülsen",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/W%C3%A4lzlagerzubeh%C3%B6r/Spannh%C3%BClsen.csv?web=1"
+          },
+          {
+            "name": "Abziehhülsen",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/W%C3%A4lzlagerzubeh%C3%B6r/Abziehh%C3%BClsen.csv?web=1"
+          },
+          {
+            "name": "Nutmuttern DIN 981",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/W%C3%A4lzlagerzubeh%C3%B6r/Nutmuttern%20DIN%20981.csv?web=1"
+          },
+          {
+            "name": "Sicherungsbleche DIN 5406",
+            "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/W%C3%A4lzlagerzubeh%C3%B6r/Sicherungsbleche%20DIN%205406.csv?web=1"
+          }
+        ]
+      },
+      {
+        "name": "Wälz- und Gleitlager",
+        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/W%C3%A4lz-%20und%20Gleitlager/W%C3%A4lz-%20und%20Gleitlager.csv?web=1"
+      }
+    ]
+  },
+  {
+    "name": "Messtechnik",
+    "children": [
+      {
+        "name": "Messtechnik",
+        "link": "https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Messtechnik/Messtechnik.csv?web=1"
+      }
+    ]
+  }
+];
+
+  // Optional: kleine Reparatur typischer Kodierungsfehler (Mojibake)
+  function normalizeName(s){
+    if(!s) return s;
+    return s
+      .replace(/Ã¼/g,'ü').replace(/Ã¶/g,'ö').replace(/Ã¤/g,'ä')
+      .replace(/ÃŸ/g,'ß').replace(/Â\"/g,'\"');
+  }
+
+  // =========================
+  // 2) ZUSTAND & HILFEN
+  // =========================
+  const state = { path: [] }; // z.B. ["Antriebstechnik","Kettentechnik"]
+
+  function sortByName(a,b){ return a.name.localeCompare(b.name, 'de', { sensitivity:'base' }); }
+  function mapByName(nodes){ const m=new Map(); for(const n of nodes||[]) m.set(n.name,n); return m; }
+  function getNodeByPath(path){
+    let level = { name:'root', children: DATA.slice().sort(sortByName) };
+    for(const seg of path){
+      const m = mapByName(level.children);
+      level = m.get(seg);
+      if(!level) return { name: seg, children: [] };
+    }
+    return level;
+  }
+
+  // =========================
+  // 3) RENDERING
+  // =========================
+  const gridEl  = document.getElementById('grid');
+  const crumbsEl= document.getElementById('crumbs');
+  const emptyEl = document.getElementById('empty');
+  const qEl     = document.getElementById('q');
+  const backBtn = document.getElementById('backBtn');
+  const homeBtn = document.getElementById('homeBtn');
+
+  function render(){
+    const node = getNodeByPath(state.path);
+    const items = (node.children||[]).slice().sort(sortByName);
+    const query = (qEl.value||'').trim().toLowerCase();
+    const filtered = query ? items.filter(i => i.name.toLowerCase().includes(query)) : items;
+
+    // Breadcrumbs
+    crumbsEl.innerHTML = '';
+    addCrumb('Start', 0, state.path.length === 0);
+    state.path.forEach((seg, i) => { addSep(); addCrumb(seg, i+1, i === state.path.length-1); });
+
+    // Grid
+    gridEl.innerHTML = '';
+    if(filtered.length === 0){
+      emptyEl.hidden = false;
+    } else {
+      emptyEl.hidden = true;
+      for(const it of filtered){
+        const hasChildren = (it.children && it.children.length > 0);
+        const card = document.createElement('button');
+        card.className = 'item fade'; card.type='button';
+        card.innerHTML = `
+          <h3>${normalizeName(it.name)}</h3>
+          <p>${hasChildren ? 'Öffnen' : 'Endknoten'}</p>
+          <span class="pill">${hasChildren ? (it.children.length + ' ▸') : '•'}</span>`;
+        card.onclick = () => {
+          if (hasChildren) {
+            state.path = [...state.path, it.name];
+            qEl.value = '';
+            render();
+          } else if (it.link) {
+            window.open(it.link, '_blank'); // Opens the CSV file in a new tab
+          } else {  
+            alert('Ausgewählt: ' + it.name); // Default behavior
+          }
+        };
+        gridEl.appendChild(card);
+      }
+    }
+
+    backBtn.disabled = state.path.length === 0;
+  }
+
+  function addCrumb(label, idx, isCurrent){
+    const c = document.createElement('button');
+    c.className = 'crumb' + (isCurrent ? ' current' : '');
+    c.type='button'; c.textContent = label;
+    if(!isCurrent){ c.onclick = () => { state.path = state.path.slice(0, idx); qEl.value=''; render(); }; }
+    crumbsEl.appendChild(c);
+  }
+  function addSep(){ const s=document.createElement('span'); s.className='sep'; s.textContent='›'; crumbsEl.appendChild(s); }
+
+  // =========================
+  // 4) EVENTS
+  // =========================
+  qEl.addEventListener('input', render);
+  backBtn.addEventListener('click', () => { if(state.path.length){ state.path.pop(); qEl.value=''; render(); }});
+  homeBtn.addEventListener('click', () => { state.path = []; qEl.value=''; render(); });
+
+  // Init
+  render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,4246 @@
+<!DOCTYPE html>
+<html lang="de">
+ <head>
+  <meta charset="utf-8"/>
+  <link href="logo.png" rel="icon" sizes="32x32" type="image/png"/>
+  <title>
+   Main Kategorie Gruppen
+  </title>
+  <style>
+
+
+/* Modal for security code */
+   .modal{
+     position:fixed;
+     inset:0;
+     display:flex;
+     align-items:center;
+     justify-content:center;
+     z-index:50;
+    }
+   .modal.hidden{display:none;}
+
+   .modal-backdrop{
+     position:absolute;
+     inset:0;
+     background:rgba(15,23,42,.35);
+    }
+
+   .modal-dialog{
+     position:relative;
+     background:#fff;
+     border-radius:12px;
+     box-shadow:0 10px 30px rgba(15,23,42,.25);
+     padding:18px 20px 16px;
+     max-width:360px;
+     width:100%;
+    }
+   .modal-title{
+     margin:0 0 8px;
+     font-size:17px;
+     font-weight:600;
+    }
+   .modal-body{
+     font-size:14px;
+     color:#4b5563;
+     margin-bottom:10px;
+    }
+
+    /*allow model to style the text area*/
+   .modal-body input,
+   .modal-body textarea{
+     width:100%;
+     padding:6px 8px;
+     border-radius:8px;
+     border:1px solid #d1d5db;
+     font-size:14px;
+     resize:vertical;
+    }
+   .modal-actions{
+     margin-top:12px;
+     display:flex;
+     justify-content:flex-end;
+     gap:8px;
+    }
+   .modal-error{
+     margin-top:6px;
+     font-size:13px;
+     color:#ef4444;
+    }
+   .modal-btn{
+     appearance:none;
+     border-radius:999px;
+     padding:6px 12px;
+     border:1px solid #d1d5db;
+     background:#fff;
+     cursor:pointer;
+     font-size:14px;
+    }
+   .modal-btn.primary{
+     background:var(--brand);
+     border-color:var(--brand);
+     color:#fff;
+    }
+   .modal-btn:focus-visible{
+     outline:0;
+     box-shadow:0 0 0 3px var(--ring);
+    }
+
+   :root{
+      --bg:#f0f2f5;
+      --card:#fff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --brand:#2563eb;
+      --ring:#93c5fd;
+      --shadow:0 2px 8px rgba(0,0,0,.08);
+      --radius:14px;
+      --speed:.22s;
+    }
+    *{box-sizing:border-box}
+    body{
+      font-family: Inter, system-ui, Arial, sans-serif;
+      background:var(--bg);
+      margin:0; padding:32px 16px 60px;
+      color:var(--text);
+    }
+    .container{max-width:1100px;margin:0 auto}
+
+    h1{
+      text-align:center;
+      font-weight:700;
+      letter-spacing:.2px;
+      margin:8px 0 28px;
+    }
+
+    /* Top toolbar */
+    .toolbar{
+      display:flex; gap:12px; flex-wrap:wrap;
+      justify-content:center; align-items:center;
+      margin:0 auto 22px;
+    }
+    .btn{
+      appearance:none; border:1px solid #d1d5db; background:#fff;
+      padding:10px 14px; border-radius:10px; cursor:pointer;
+      transition:box-shadow var(--speed), transform var(--speed), border-color var(--speed);
+      font-weight:600;
+    }
+    .btn:hover{transform:translateY(-1px); box-shadow:var(--shadow)}
+    .btn:focus-visible{outline:0; box-shadow:0 0 0 3px var(--ring)}
+    .btn.primary{background:var(--brand); color:#fff; border-color:transparent}
+
+    .search{
+      flex:1 1 360px; max-width:560px; position:relative;
+    }
+    .search input{
+      width:100%; padding:12px 14px 12px 40px; border-radius:12px;
+      border:1px solid #d1d5db; background:#fff; outline:none;
+      transition:border-color var(--speed), box-shadow var(--speed);
+      font-size:15px;
+    }
+    .search input:focus{border-color:#60a5fa; box-shadow:0 0 0 3px rgba(96,165,250,.25)}
+    .search .icon{
+      position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#9ca3af; font-size:18px;
+    }
+
+    /* Section (accordion card) */
+    .section{
+      background:var(--card); border-radius:var(--radius);
+      box-shadow:var(--shadow); margin:14px auto; overflow:hidden; border:1px solid #e5e7eb;
+    }
+    .section[hidden]{display:none !important;}
+
+    .section-header{
+      width:100%; text-align:left; padding:18px 18px;
+      background:#fff; border:none; cursor:pointer; display:flex; align-items:center; gap:12px;
+      font-size:18px; font-weight:700; color:var(--text);
+    }
+    .section-header:focus-visible{outline:0; box-shadow:inset 0 0 0 3px var(--ring)}
+    .chev{
+      flex:0 0 auto; transition:transform var(--speed);
+      width:18px; height:18px; display:inline-block;
+      mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="black" d="M8.12 9.29L12 13.17l3.88-3.88a1 1 0 1 1 1.41 1.42l-4.59 4.58a1 1 0 0 1-1.41 0L6.7 10.7a1 1 0 1 1 1.41-1.41Z"/></svg>') center/contain no-repeat;
+      background:#6b7280;
+    }
+    .section[aria-expanded="true"] .chev{transform:rotate(180deg)}
+
+    .section-title{flex:1}
+    .count{
+      color:var(--muted); font-weight:600; font-size:13px; background:#f3f4f6; padding:4px 8px; border-radius:999px;
+    }
+
+    /* Collapsible content */
+    .section-content{
+      padding:0 18px 2px 18px;
+      transition:max-height var(--speed) ease, opacity var(--speed) ease;
+      overflow:hidden; opacity:0; max-height:0;
+    }
+    .section[aria-expanded="true"] .section-content{opacity:1; max-height:none; padding-bottom:16px}
+
+    ul{list-style:none; padding-left:0; margin:10px 0 0}
+    li{
+      padding:10px 0;
+      border-top:1px dashed #e5e7eb;
+      display:flex;
+      gap:12px;
+      align-items:center;
+      flex-wrap:nowrap;          /* everything in one row on desktop */
+    }
+    li:first-child{border-top:none}
+
+/* index number */
+    .item-index{
+      width:26px;
+      text-align:right;
+      font-size:13px;
+      color:#6b7280;
+      flex:0 0 auto;
+    }
+
+    .item-name{
+      flex:2;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+
+    /* View Daten button */
+    a{
+      color:var(--brand);
+      text-decoration:none;
+      font-weight:600;
+      border:1px solid rgba(37,99,235,.18);
+      padding:6px 10px;
+      border-radius:10px;
+      transition:background var(--speed), border-color var(--speed);
+      white-space:nowrap;
+    }
+
+/* controls (Bemerkung + Status) */
+    .item-controls{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      font-size:13px;
+      color:#4b5563;
+      flex:0 0 auto;
+    }
+
+    .note-btn{
+      appearance:none;
+      border-radius:999px;
+      padding:4px 10px;
+      border:1px solid #d1d5db;
+      background:#fff;
+      cursor:pointer;
+      font-size:12px;
+    }
+    .note-btn.has-note{
+      border-color:var(--brand);
+      color:var(--brand);
+    }
+
+    /* color the status via a dot + select background */
+    li.status-not-started .item-name::before,
+    li.status-in-progress .item-name::before,
+    li.status-completed .item-name::before{
+      content:"";
+      display:inline-block;
+      width:8px;
+      height:8px;
+      border-radius:999px;
+      margin-right:6px;
+    }
+
+    li.status-not-started .item-name::before{ background:#22c55e; }   /* green */
+    li.status-in-progress .item-name::before{ background:#eab308; }   /* yellow */
+    li.status-completed     .item-name::before{ background:#ef4444; } /* red */
+
+    li.status-not-started .status-select{
+      background:#ecfdf3;
+      border-color:#bbf7d0;
+    }
+    li.status-in-progress .status-select{
+      background:#fef9c3;
+      border-color:#facc15;
+    }
+    li.status-completed .status-select{
+      background:#fee2e2;
+      border-color:#f87171;
+    }
+    .item-controls label{
+      display:flex;
+      align-items:center;
+      gap:4px;
+    }
+    .item-controls input[type="text"],
+    .item-controls select{
+      padding:4px 6px;
+      border-radius:6px;
+      border:1px solid #d1d5db;
+      font-size:13px;
+    }
+
+/* Bemerkung gets a bit wider on focus */
+    .remark-input{
+      min-width:180px;
+      max-width:260px;
+    }
+    .remark-input:focus{
+      min-width:260px;
+    }
+
+/* better on very small screens – allow wrapping there */
+    @media (max-width: 900px){
+      li{flex-wrap:wrap;}
+      .item-controls{flex-basis:100%;}
+    }
+
+
+    a:hover{background:rgba(37,99,235,.06); border-color:rgba(37,99,235,.28)}
+    .muted{color:var(--muted); font-size:14px}
+  </style>
+
+
+
+ </head>
+ <body>
+  <div class="container">
+   <h1>
+    Main Kategorie Gruppen
+   </h1>
+   <!-- Toolbar -->
+   <div class="toolbar">
+    <div class="search" role="search">
+     <span class="icon">
+      🔎
+     </span>
+     <input aria-label="Filter" id="search" placeholder="Kategorien oder Gruppen filtern &hellip;" type="search"/>
+    </div>
+    <button class="btn" id="expandAll" type="button">
+     Alle &ouml;ffnen
+    </button>
+    <button class="btn" id="collapseAll" type="button">
+     Alle schlie&szlig;en
+    </button>
+    <button class="btn primary" id="clearFilter" type="button">
+     Filter l&ouml;schen
+    </button>
+   </div>
+   <!-- END: Your existing sections -->
+   <div class="section" id="Abstreifer">
+    <h2>
+     Abstreifer
+    </h2>
+    <ul>
+     <li data-item-id="abstreifer_am45">  
+      <span class="item-name">
+       Abstreifer AM45
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Abstreifer/Abstreifer%20AM45.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li data-item-id="abstreifer_ae42"> 
+      <span class="item-name">
+       Abstreifer AE42
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Abstreifer/Abstreifer%20AE42.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li data-item-id="abstreifer_ae40"> 
+      <span class="item-name">
+       Abstreifer AE40
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Abstreifer/Abstreifer%20AE40.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li data-item-id="abstreifer_ae41"> 
+      <span class="item-name">
+       Abstreifer AE41
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Abstreifer/Abstreifer%20AE41.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li data-item-id="abstreifer_am43"> 
+      <span class="item-name">
+       Abstreifer AM43
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Abstreifer/Abstreifer%20AM43.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li data-item-id="abstreifer_am44"> 
+      <span class="item-name">
+       Abstreifer AM44
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Abstreifer/Abstreifer%20AM44.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li data-item-id="abstreifer_am54"> 
+      <span class="item-name">
+       Abstreifer AM54
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Abstreifer/Abstreifer%20AM54.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Abstreifer AE47
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Abstreifer/Abstreifer%20AE47.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Anlaufscheiben">
+    <h2>
+     Anlaufscheiben
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Anlaufscheiben P10
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Anlaufscheiben/Anlaufscheiben%20P10.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Anlaufscheiben P20
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Anlaufscheiben/Anlaufscheiben%20P20.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Anlaufscheiben P14
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Anlaufscheiben/Anlaufscheiben%20P14.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Anlaufscheiben P200
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Anlaufscheiben/Anlaufscheiben%20P200.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Anschlagpuffer konisch">
+    <h2>
+     Anschlagpuffer konisch
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Anschlagpuffer konisch Au&szlig;engewinde
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Anschlagpuffer%20konisch/Anschlagpuffer%20konisch%20Au%C3%9Fengewinde.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Anschlagpuffer konisch Innengewinde
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Anschlagpuffer%20konisch/Anschlagpuffer%20konisch%20Innengewinde.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Au&szlig;enspanns&auml;tze">
+    <h2>
+     Au&szlig;enspanns&auml;tze
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Au&szlig;enspanns&auml;tze CLAMPEX KTR 603
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Au%C3%9Fenspanns%C3%A4tze/Au%C3%9Fenspanns%C3%A4tze%20CLAMPEX%20KTR%20603.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Au&szlig;enspanns&auml;tze CLAMPEX KTR 620
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Au%C3%9Fenspanns%C3%A4tze/Au%C3%9Fenspanns%C3%A4tze%20CLAMPEX%20KTR%20620.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Axial-Nadellager">
+    <h2>
+     Axial-Nadellager
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Axialscheiben
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Axial-Nadellager/Axialscheiben.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Axial-Nadelkr&auml;nze
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Axial-Nadellager/Axial-Nadelkr%C3%A4nze.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Axial-Zylinderrollenlager">
+    <h2>
+     Axial-Zylinderrollenlager
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Axial-Zylinderrollenlager komplett
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Axial-Zylinderrollenlager/Axial-Zylinderrollenlager%20komplett.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Geh&auml;usescheiben
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Axial-Zylinderrollenlager/Geh%C3%A4usescheiben.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Axial-Zylinderrollenkr&auml;nze
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Axial-Zylinderrollenlager/Axial-Zylinderrollenkr%C3%A4nze.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Wellenscheiben
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Axial-Zylinderrollenlager/Wellenscheiben.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="DIN 472 Sicherungsringe">
+    <h2>
+     DIN 472 Sicherungsringe
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Sicherungsringe DIN 472 Federstahl
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/DIN%20472%20Sicherungsringe/Sicherungsringe%20DIN%20472%20Federstahl.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Sicherungsringe DIN 472 Edelstahl
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/DIN%20472%20Sicherungsringe/Sicherungsringe%20DIN%20472%20Edelstahl.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Sicherungsringe DIN 472 Federstahl verzinkt
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/DIN%20472%20Sicherungsringe/Sicherungsringe%20DIN%20472%20Federstahl%20verzinkt.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Sicherungsringe DIN 472 verst&auml;rkt Federstahl
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/DIN%20472%20Sicherungsringe/Sicherungsringe%20DIN%20472%20verst%C3%A4rkt%20Federstahl.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Doppelabstreifer">
+    <h2>
+     Doppelabstreifer
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Doppelabstreifer AD48
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Doppelabstreifer/Doppelabstreifer%20AD48.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Doppelabstreifer AD51
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Doppelabstreifer/Doppelabstreifer%20AD51.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Doppelabstreifer ADM55
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Doppelabstreifer/Doppelabstreifer%20ADM55.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Doppelabstreifer AD61
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Doppelabstreifer/Doppelabstreifer%20AD61.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Doppelabstreifer AD60
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Doppelabstreifer/Doppelabstreifer%20AD60.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Elektromotoren">
+    <h2>
+     Elektromotoren
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Elektromotoren
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Elektromotoren/Elektromotoren.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Flanschlagereinheiten CS4F, CXC4F">
+    <h2>
+     Flanschlagereinheiten CS4F, CXC4F
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Flanschlagereinheiten CS4F
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Flanschlagereinheiten%20CS4F%2C%20CXC4F/Flanschlagereinheiten%20CS4F.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Flanschlagereinheiten CXC4F
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Flanschlagereinheiten%20CS4F%2C%20CXC4F/Flanschlagereinheiten%20CXC4F.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Flanschlagereinheiten CS4FC, CXC4FC">
+    <h2>
+     Flanschlagereinheiten CS4FC, CXC4FC
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Flanschlagereinheiten CS4FC
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Flanschlagereinheiten%20CS4FC%2C%20CXC4FC/Flanschlagereinheiten%20CS4FC.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Flanschlagereinheiten CXC4FC
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Flanschlagereinheiten%20CS4FC%2C%20CXC4FC/Flanschlagereinheiten%20CXC4FC.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Freil&auml;ufe">
+    <h2>
+     Freil&auml;ufe
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       H&uuml;lsenfreil&auml;ufe
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Freil%C3%A4ufe/H%C3%BClsenfreil%C3%A4ufe.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="F&uuml;hrungsb&auml;nder">
+    <h2>
+     F&uuml;hrungsb&auml;nder
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       F&uuml;hrungsb&auml;nder GS10
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/F%C3%BChrungsb%C3%A4nder/F%C3%BChrungsb%C3%A4nder%20GS10.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       F&uuml;hrungsb&auml;nder GS01
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/F%C3%BChrungsb%C3%A4nder/F%C3%BChrungsb%C3%A4nder%20GS01.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Gammaringe VRM 01">
+    <h2>
+     Gammaringe VRM 01
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Gammaringe VRM 01 NBR
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gammaringe%20VRM%2001/Gammaringe%20VRM%2001%20NBR.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Gammaringe VRM 01 FKM
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gammaringe%20VRM%2001/Gammaringe%20VRM%2001%20FKM.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Gammaringe VRM 02">
+    <h2>
+     Gammaringe VRM 02
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Gammaringe VRM 02 NBR
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gammaringe%20VRM%2002/Gammaringe%20VRM%2002%20NBR.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Gammaringe VRM 02 FKM
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gammaringe%20VRM%2002/Gammaringe%20VRM%2002%20FKM.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Gleitlagerbuchsen">
+    <h2>
+     Gleitlagerbuchsen
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Gleitlagerbuchsen P10
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gleitlagerbuchsen/Gleitlagerbuchsen%20P10.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Gleitlagerbuchsen P11
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gleitlagerbuchsen/Gleitlagerbuchsen%20P11.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Gleitlagerbuchsen P20
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gleitlagerbuchsen/Gleitlagerbuchsen%20P20.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Gleitlagerbuchsen P14
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gleitlagerbuchsen/Gleitlagerbuchsen%20P14.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Gleitlagerbuchsen P200
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gleitlagerbuchsen/Gleitlagerbuchsen%20P200.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Gleitlagerbundbuchsen">
+    <h2>
+     Gleitlagerbundbuchsen
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Gleitlagerbundbuchsen P10
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gleitlagerbundbuchsen/Gleitlagerbundbuchsen%20P10.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Gleitlagerbundbuchsen P11
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gleitlagerbundbuchsen/Gleitlagerbundbuchsen%20P11.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Gleitlagerbundbuchsen P14
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gleitlagerbundbuchsen/Gleitlagerbundbuchsen%20P14.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Gummi-Metall-Anschlagpuffer">
+    <h2>
+     Gummi-Metall-Anschlagpuffer
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Gummi-Metall-Anschlagpuffer Au&szlig;engewinde
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gummi-Metall-Anschlagpuffer/Gummi-Metall-Anschlagpuffer%20Au%C3%9Fengewinde.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Gummi-Metall-Anschlagpuffer Innengewinde
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gummi-Metall-Anschlagpuffer/Gummi-Metall-Anschlagpuffer%20Innengewinde.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Gummi-Metall-Puffer">
+    <h2>
+     Gummi-Metall-Puffer
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Gummi-Metall-Puffer Typ-4 (D)
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gummi-Metall-Puffer/Gummi-Metall-Puffer%20Typ-4%20%28D%29.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Gummi-Metall-Puffer Typ-1 (A)
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gummi-Metall-Puffer/Gummi-Metall-Puffer%20Typ-1%20%28A%29.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Gummi-Metall-Puffer Typ-2 (B)
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gummi-Metall-Puffer/Gummi-Metall-Puffer%20Typ-2%20%28B%29.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Gummi-Metall-Puffer Typ-5 (E)
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gummi-Metall-Puffer/Gummi-Metall-Puffer%20Typ-5%20%28E%29.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Gummi-Metall-Puffer Typ-3 (C)
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gummi-Metall-Puffer/Gummi-Metall-Puffer%20Typ-3%20%28C%29.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Gummi-Metall-Puffer Typ-2 (B) Edelstahl
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gummi-Metall-Puffer/Gummi-Metall-Puffer%20Typ-2%20%28B%29%20Edelstahl.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Gummi-Metall-Puffer Typ-4 (D) Edelstahl
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gummi-Metall-Puffer/Gummi-Metall-Puffer%20Typ-4%20%28D%29%20Edelstahl.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Gummi-Metall-Puffer Typ-3 (C) Edelstahl
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gummi-Metall-Puffer/Gummi-Metall-Puffer%20Typ-3%20%28C%29%20Edelstahl.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Gummi-Metall-Puffer Typ-1 (A) Edelstahl
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gummi-Metall-Puffer/Gummi-Metall-Puffer%20Typ-1%20%28A%29%20Edelstahl.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Gummi-Metall-Puffer Typ-5 (E) Edelstahl
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gummi-Metall-Puffer/Gummi-Metall-Puffer%20Typ-5%20%28E%29%20Edelstahl.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Gummi-Metall-Puffer mit Bodenplatte">
+    <h2>
+     Gummi-Metall-Puffer mit Bodenplatte
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Gummi-Metall-Puffer mit Bodenplatte oval
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gummi-Metall-Puffer%20mit%20Bodenplatte/Gummi-Metall-Puffer%20mit%20Bodenplatte%20oval.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Gummi-Metall-Puffer mit Bodenplatte quadratisch
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Gummi-Metall-Puffer%20mit%20Bodenplatte/Gummi-Metall-Puffer%20mit%20Bodenplatte%20quadratisch.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Hautreinigung">
+    <h2>
+     Hautreinigung
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Handwaschpasten
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Hautreinigung/Handwaschpasten.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Hochgenauigkeitslager">
+    <h2>
+     Hochgenauigkeitslager
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Spindellager
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Hochgenauigkeitslager/Spindellager.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="H&auml;ngelager Geh&auml;useeinheit">
+    <h2>
+     H&auml;ngelager Geh&auml;useeinheit
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       H&auml;ngelager Geh&auml;useeinheiten Bauform HB
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/H%C3%A4ngelager%20Geh%C3%A4useeinheit/H%C3%A4ngelager%20Geh%C3%A4useeinheiten%20Bauform%20HB.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       H&auml;ngelager Geh&auml;useeinheiten Bauform HE, EHE
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/H%C3%A4ngelager%20Geh%C3%A4useeinheit/H%C3%A4ngelager%20Geh%C3%A4useeinheiten%20Bauform%20HE%2C%20EHE.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Innenspanns&auml;tze nicht selbstzentrierend">
+    <h2>
+     Innenspanns&auml;tze nicht selbstzentrierend
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Innenspanns&auml;tze CLAMPEX KTR 100
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Innenspanns%C3%A4tze%20nicht%20selbstzentrierend/Innenspanns%C3%A4tze%20CLAMPEX%20KTR%20100.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Innenspanns&auml;tze CLAMPEX KTR 150
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Innenspanns%C3%A4tze%20nicht%20selbstzentrierend/Innenspanns%C3%A4tze%20CLAMPEX%20KTR%20150.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Innenspanns&auml;tze CLAMPEX KTR 125
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Innenspanns%C3%A4tze%20nicht%20selbstzentrierend/Innenspanns%C3%A4tze%20CLAMPEX%20KTR%20125.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Innenspanns&auml;tze selbstzentrierend">
+    <h2>
+     Innenspanns&auml;tze selbstzentrierend
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Innenspanns&auml;tze CLAMPEX KTR 105
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Innenspanns%C3%A4tze%20selbstzentrierend/Innenspanns%C3%A4tze%20CLAMPEX%20KTR%20105.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Innenspanns&auml;tze CLAMPEX KTR 130
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Innenspanns%C3%A4tze%20selbstzentrierend/Innenspanns%C3%A4tze%20CLAMPEX%20KTR%20130.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Innenspanns&auml;tze CLAMPEX KTR 131
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Innenspanns%C3%A4tze%20selbstzentrierend/Innenspanns%C3%A4tze%20CLAMPEX%20KTR%20131.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Innenspanns&auml;tze CLAMPEX KTR 200
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Innenspanns%C3%A4tze%20selbstzentrierend/Innenspanns%C3%A4tze%20CLAMPEX%20KTR%20200.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Innenspanns&auml;tze CLAMPEX KTR 201
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Innenspanns%C3%A4tze%20selbstzentrierend/Innenspanns%C3%A4tze%20CLAMPEX%20KTR%20201.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Innenspanns&auml;tze CLAMPEX KTR 203
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Innenspanns%C3%A4tze%20selbstzentrierend/Innenspanns%C3%A4tze%20CLAMPEX%20KTR%20203.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Innenspanns&auml;tze Clampex KTR 206
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Innenspanns%C3%A4tze%20selbstzentrierend/Innenspanns%C3%A4tze%20Clampex%20KTR%20206.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Innenspanns&auml;tze CLAMPEX KTR 225
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Innenspanns%C3%A4tze%20selbstzentrierend/Innenspanns%C3%A4tze%20CLAMPEX%20KTR%20225.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Innenspanns&auml;tze CLAMPEX KTR 250
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Innenspanns%C3%A4tze%20selbstzentrierend/Innenspanns%C3%A4tze%20CLAMPEX%20KTR%20250.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Innenspanns&auml;tze CLAMPEX KTR 400
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Innenspanns%C3%A4tze%20selbstzentrierend/Innenspanns%C3%A4tze%20CLAMPEX%20KTR%20400.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="KTR ROTEX">
+    <h2>
+     KTR ROTEX
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       KTR ROTEX Zahnkranz
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/KTR%20ROTEX/KTR%20ROTEX%20Zahnkranz.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="KTR ROTEX Flansche">
+    <h2>
+     KTR ROTEX Flansche
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       KTR ROTEX Mitnehmerflansche
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/KTR%20ROTEX%20Flansche/KTR%20ROTEX%20Mitnehmerflansche.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       KTR ROTEX K-Flansche
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/KTR%20ROTEX%20Flansche/KTR%20ROTEX%20K-Flansche.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       KTR ROTEX K-Flansche N
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/KTR%20ROTEX%20Flansche/KTR%20ROTEX%20K-Flansche%20N.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="KTR ROTEX GS">
+    <h2>
+     KTR ROTEX GS
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       KTR ROTEX GS Mittelst&uuml;cke
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/KTR%20ROTEX%20GS/KTR%20ROTEX%20GS%20Mittelst%C3%BCcke.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       KTR ROTEX GS Zahnkranz
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/KTR%20ROTEX%20GS/KTR%20ROTEX%20GS%20Zahnkranz.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="KTR ROTEX GS Naben">
+    <h2>
+     KTR ROTEX GS Naben
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       KTR ROTEX GS NABEN Ungebohrt
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/KTR%20ROTEX%20GS%20Naben/KTR%20ROTEX%20GS%20NABEN%20Ungebohrt.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       KTR ROTEX GS Klemmnaben
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/KTR%20ROTEX%20GS%20Naben/KTR%20ROTEX%20GS%20Klemmnaben.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="KTR ROTEX Naben">
+    <h2>
+     KTR ROTEX Naben
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       ROTEX NABE Un-Vorgebohrt
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/KTR%20ROTEX%20Naben/ROTEX%20NABE%20Un-Vorgebohrt.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       KTR ROTEX Nabe Kegel
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/KTR%20ROTEX%20Naben/KTR%20ROTEX%20Nabe%20Kegel.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       KTR ROTEX Nabe TB1
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/KTR%20ROTEX%20Naben/KTR%20ROTEX%20Nabe%20TB1.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       KTR ROTEX Nabe TB2
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/KTR%20ROTEX%20Naben/KTR%20ROTEX%20Nabe%20TB2.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Kegelrollenlager">
+    <h2>
+     Kegelrollenlager
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Kegelrollenlager metrisch
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kegelrollenlager/Kegelrollenlager%20metrisch.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Kegelrollenlager z&ouml;llig
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kegelrollenlager/Kegelrollenlager%20z%C3%B6llig.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Keilriemenscheiben">
+    <h2>
+     Keilriemenscheiben
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Profil SPA
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Keilriemenscheiben/Profil%20SPA.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Profil SPB
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Keilriemenscheiben/Profil%20SPB.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Profil SPC
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Keilriemenscheiben/Profil%20SPC.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Profil SPZ
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Keilriemenscheiben/Profil%20SPZ.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Keilrippenriemen">
+    <h2>
+     Keilrippenriemen
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Profil PJ / J
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Keilrippenriemen/Profil%20PJ%20_%20J.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Profil PL / L
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Keilrippenriemen/Profil%20PL%20_%20L.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Profil PM / M
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Keilrippenriemen/Profil%20PM%20_%20M.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Kettenr&auml;der">
+    <h2>
+     Kettenr&auml;der
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Kettenr&auml;der DIN 8187 f&uuml;r Taperlock-Spannbuchsen
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kettenr%C3%A4der/Kettenr%C3%A4der%20DIN%208187%20f%C3%BCr%20Taperlock-Spannbuchsen.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Kettenr&auml;der DIN 8187 vorgebohrt
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kettenr%C3%A4der/Kettenr%C3%A4der%20DIN%208187%20vorgebohrt.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Kettenr&auml;der DIN 8188 vorgebohrt
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kettenr%C3%A4der/Kettenr%C3%A4der%20DIN%208188%20vorgebohrt.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Kettenr&auml;der DIN 8187 einbaufertig simplex">
+    <h2>
+     Kettenr&auml;der DIN 8187 einbaufertig simplex
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Kettenr&auml;der DIN 8187 einbaufertig - ISO 08 B-1 (1/2" x 5/16")
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kettenr%C3%A4der%20DIN%208187%20einbaufertig%20simplex/Kettenr%C3%A4der%20DIN%208187%20einbaufertig%20-%20ISO%2008%20B-1.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Kettenr&auml;der DIN 8187 einbaufertig - ISO 12 B-1 (3/4" x 7/16")
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kettenr%C3%A4der%20DIN%208187%20einbaufertig%20simplex/Kettenr%C3%A4der%20DIN%208187%20einbaufertig%20-%20ISO%2012%20B-1.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Kettenr&auml;der DIN 8187 einbaufertig - ISO 06 B-1 (3/8&Acirc;&rdquo; x 7/32&Acirc;&rdquo;)
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kettenr%C3%A4der%20DIN%208187%20einbaufertig%20simplex/Kettenr%C3%A4der%20DIN%208187%20einbaufertig%20-%20ISO%2006%20B-1.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Kettenr&auml;der DIN 8187 einbaufertig - ISO 10 B-1 (5/8" x 3/8")
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kettenr%C3%A4der%20DIN%208187%20einbaufertig%20simplex/Kettenr%C3%A4der%20DIN%208187%20einbaufertig%20-%20ISO%2010%20B-1.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Kettenr&auml;der DIN 8187 einbaufertig - ISO 16 B-1 (1" x 17,02 mm)
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kettenr%C3%A4der%20DIN%208187%20einbaufertig%20simplex/Kettenr%C3%A4der%20DIN%208187%20einbaufertig%20-%20ISO%2016%20B-1.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Klassische Keilriemen ummantelt DIN 2215">
+    <h2>
+     Klassische Keilriemen ummantelt DIN 2215
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       10/Z (10 mm)
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Klassische%20Keilriemen%20ummantelt%20DIN%202215/10_Z%20%2810%20mm%29.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       13/A (13 mm)
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Klassische%20Keilriemen%20ummantelt%20DIN%202215/13_A%20%2813%20mm%29.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       17/B (17 mm)
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Klassische%20Keilriemen%20ummantelt%20DIN%202215/17_B%20%2817%20mm%29.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Kolbendichtungen (Hydraulik)">
+    <h2>
+     Kolbendichtungen (Hydraulik)
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Kolbendichtungen KK03
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kolbendichtungen%20%28Hydraulik%29/Kolbendichtungen%20KK03.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Kolbendichtungen KNA23
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kolbendichtungen%20%28Hydraulik%29/Kolbendichtungen%20KNA23.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Kolbendichtungen KNA28
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kolbendichtungen%20%28Hydraulik%29/Kolbendichtungen%20KNA28.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Kolbendichtungen KNA44
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kolbendichtungen%20%28Hydraulik%29/Kolbendichtungen%20KNA44.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Kolbendichtungen KPOR30
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kolbendichtungen%20%28Hydraulik%29/Kolbendichtungen%20KPOR30.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Kolbendichtungen KPOR31
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kolbendichtungen%20%28Hydraulik%29/Kolbendichtungen%20KPOR31.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Kolbendichtungen K70
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kolbendichtungen%20%28Hydraulik%29/Kolbendichtungen%20K70.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Kolbendichtungen K84
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kolbendichtungen%20%28Hydraulik%29/Kolbendichtungen%20K84.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Kolbendichtungen KNA16
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kolbendichtungen%20%28Hydraulik%29/Kolbendichtungen%20KNA16.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Kolbendichtungen KK22
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kolbendichtungen%20%28Hydraulik%29/Kolbendichtungen%20KK22.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Kolbenf&uuml;hrungsringe">
+    <h2>
+     Kolbenf&uuml;hrungsringe
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Kolbenf&uuml;hrungsringe FRK05
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kolbenf%C3%BChrungsringe/Kolbenf%C3%BChrungsringe%20FRK05.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Kombinierte Axial oder Radialnadellager">
+    <h2>
+     Kombinierte Axial oder Radialnadellager
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Nadel-Schr&auml;gkugellager
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kombinierte%20Axial%20oder%20Radialnadellager/Nadel-Schr%C3%A4gkugellager.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Nadel-Axial-Kugellager
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kombinierte%20Axial%20oder%20Radialnadellager/Nadel-Axial-Kugellager.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Nadel-Axial-Zylinderrollenlager
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kombinierte%20Axial%20oder%20Radialnadellager/Nadel-Axial-Zylinderrollenlager.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Kranbahnanschl&auml;ge">
+    <h2>
+     Kranbahnanschl&auml;ge
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Kranbahnanschl&auml;ge Au&szlig;engewinde
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kranbahnanschl%C3%A4ge/Kranbahnanschl%C3%A4ge%20Au%C3%9Fengewinde.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Kranbahnanschl&auml;ge Innengewinde
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kranbahnanschl%C3%A4ge/Kranbahnanschl%C3%A4ge%20Innengewinde.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Kugellager">
+    <h2>
+     Kugellager
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Schulterkugellager
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kugellager/Schulterkugellager.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Axial-Rillenkugellager
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kugellager/Axial-Rillenkugellager.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Vierpunktlager
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kugellager/Vierpunktlager.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Pendelkugellager
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Kugellager/Pendelkugellager.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Lagergeh&auml;use zweiteilig">
+    <h2>
+     Lagergeh&auml;use zweiteilig
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Stehlagergeh&auml;use zweiteilig
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Lagergeh%C3%A4use%20zweiteilig/Stehlagergeh%C3%A4use%20zweiteilig.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Geh&auml;usedeckel
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Lagergeh%C3%A4use%20zweiteilig/Geh%C3%A4usedeckel.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Dichtungss&auml;tze
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Lagergeh%C3%A4use%20zweiteilig/Dichtungss%C3%A4tze.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Festringe
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Lagergeh%C3%A4use%20zweiteilig/Festringe.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Fettreglerscheiben
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Lagergeh%C3%A4use%20zweiteilig/Fettreglerscheiben.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Laufrollen, St&uuml;tzrollen, Kurvenrollen">
+    <h2>
+     Laufrollen, St&uuml;tzrollen, Kurvenrollen
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Kurvenrollen
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Laufrollen%2C%20St%C3%BCtzrollen%2C%20Kurvenrollen/Kurvenrollen.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       St&uuml;tzrollen
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Laufrollen%2C%20St%C3%BCtzrollen%2C%20Kurvenrollen/St%C3%BCtzrollen.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Laufrollen
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Laufrollen%2C%20St%C3%BCtzrollen%2C%20Kurvenrollen/Laufrollen.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Lederhandschuhe">
+    <h2>
+     Lederhandschuhe
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Lederhandschuhe Granit
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Lederhandschuhe/Lederhandschuhe%20Granit.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Lederhandschuhe Griffy
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Lederhandschuhe/Lederhandschuhe%20Griffy.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Maschinenelemente">
+    <h2>
+     Maschinenelemente
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       DIN 6885 Passfedern
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Maschinenelemente/DIN%206885%20Passfedern.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Maschinenf&uuml;&szlig;e">
+    <h2>
+     Maschinenf&uuml;&szlig;e
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Maschinenf&uuml;&szlig;e Edelstahl verchromt
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Maschinenf%C3%BC%C3%9Fe/Maschinenf%C3%BC%C3%9Fe%20Edelstahl%20verchromt.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Maschinenf&uuml;&szlig;e Edelstahl verzinkt
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Maschinenf%C3%BC%C3%9Fe/Maschinenf%C3%BC%C3%9Fe%20Edelstahl%20verzinkt.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Maschinenf&uuml;&szlig;e Edelstahl
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Maschinenf%C3%BC%C3%9Fe/Maschinenf%C3%BC%C3%9Fe%20Edelstahl.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Maschinenf&uuml;&szlig;e und Ger&auml;tef&uuml;&szlig;e">
+    <h2>
+     Maschinenf&uuml;&szlig;e und Ger&auml;tef&uuml;&szlig;e
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Ger&auml;tef&uuml;&szlig;e
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Maschinenf%C3%BC%C3%9Fe%20und%20Ger%C3%A4tef%C3%BC%C3%9Fe/Ger%C3%A4tef%C3%BC%C3%9Fe.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Messtechnik">
+    <h2>
+     Messtechnik
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Messtechnik
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Messtechnik/Messtechnik.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="NILOS Ringe">
+    <h2>
+     NILOS Ringe
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       NILOS Ringe Typ AV
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/NILOS%20Ringe/NILOS%20Ringe%20Typ%20AV.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       NILOS Ringe Typ JV
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/NILOS%20Ringe/NILOS%20Ringe%20Typ%20JV.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       NILOS Ringe Typ AK
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/NILOS%20Ringe/NILOS%20Ringe%20Typ%20AK.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       NILOS Ringe Typ ZAV
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/NILOS%20Ringe/NILOS%20Ringe%20Typ%20ZAV.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       NILOS Ringe Typ ZJV
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/NILOS%20Ringe/NILOS%20Ringe%20Typ%20ZJV.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       NILOS Ringe Typ AVH
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/NILOS%20Ringe/NILOS%20Ringe%20Typ%20AVH.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       NILOS Stahlscheibendichtungen LSTO
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/NILOS%20Ringe/NILOS%20Stahlscheibendichtungen%20LSTO.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       NILOS Distanzringe Typ A
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/NILOS%20Ringe/NILOS%20Distanzringe%20Typ%20A.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       NILOS Distanzringe Typ J
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/NILOS%20Ringe/NILOS%20Distanzringe%20Typ%20J.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Nadelkr&auml;nze">
+    <h2>
+     Nadelkr&auml;nze
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Nadelkr&auml;nze
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Nadelkr%C3%A4nze/Nadelkr%C3%A4nze.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Nadelkr&auml;nze f&uuml;r Pleuel
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Nadelkr%C3%A4nze/Nadelkr%C3%A4nze%20f%C3%BCr%20Pleuel.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Nadellager">
+    <h2>
+     Nadellager
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Nadelh&uuml;lsen
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Nadellager/Nadelh%C3%BClsen.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Nadelb&uuml;chsen
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Nadellager/Nadelb%C3%BCchsen.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Nadellager massiv
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Nadellager/Nadellager%20massiv.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Innenringe
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Nadellager/Innenringe.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="O-Ringe">
+    <h2>
+     O-Ringe
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       O-Ringe NBR
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/O-Ringe/O-Ringe%20NBR.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       O-Ringe EPDM
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/O-Ringe/O-Ringe%20EPDM.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       O-Ringe FKM
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/O-Ringe/O-Ringe%20FKM.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       O-Ringe VMQ
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/O-Ringe/O-Ringe%20VMQ.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       O-Ringe HNBR
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/O-Ringe/O-Ringe%20HNBR.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="O-Ringe ummantelt">
+    <h2>
+     O-Ringe ummantelt
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       O-Ringe ummantelt FEP-V
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/O-Ringe%20ummantelt/O-Ringe%20ummantelt%20FEP-V.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       O-Ringe ummantelt FEP-F
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/O-Ringe%20ummantelt/O-Ringe%20ummantelt%20FEP-F.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Parabelfedern">
+    <h2>
+     Parabelfedern
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Parabelfedern Au&szlig;engewinde
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Parabelfedern/Parabelfedern%20Au%C3%9Fengewinde.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Parabelfedern Innengewinde
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Parabelfedern/Parabelfedern%20Innengewinde.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Parabelfedern Au&szlig;engewinde Edelstahl
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Parabelfedern/Parabelfedern%20Au%C3%9Fengewinde%20Edelstahl.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Radialdichtungen">
+    <h2>
+     Radialdichtungen
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Verschlusskappen
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Radialdichtungen/Verschlusskappen.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Wellen-Reparaturh&uuml;lsen
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Radialdichtungen/Wellen-Reparaturh%C3%BClsen.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Radialdichtungen f&uuml;r Schwenkbewegung">
+    <h2>
+     Radialdichtungen f&uuml;r Schwenkbewegung
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Radialdichtungen RPORA 32
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Radialdichtungen%20f%C3%BCr%20Schwenkbewegung/Radialdichtungen%20RPORA%2032.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Radialdichtungen RPORI 32
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Radialdichtungen%20f%C3%BCr%20Schwenkbewegung/Radialdichtungen%20RPORI%2032.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Rillenkugellager">
+    <h2>
+     Rillenkugellager
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Rillenkugellager Standard
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rillenkugellager/Rillenkugellager%20Standard11.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Rillenkugellager f&uuml;r hohe und tiefe Temperaturen
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rillenkugellager/Rillenkugellager%20f%C3%BCr%20hohe%20und%20tiefe%20Temperaturen.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Rillenkugellager f&uuml;r hohe Drehzahlen
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rillenkugellager/Rillenkugellager%20f%C3%BCr%20hohe%20Drehzahlen.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Rillenkugellager z&ouml;llig
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rillenkugellager/Rillenkugellager%20z%C3%B6llig.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Rillenkugellager einreihig Festschmierstoff
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rillenkugellager/Rillenkugellager%20einreihig%20Festschmierstoff.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Rillenkugellager kegelige Bohrung
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rillenkugellager/Rillenkugellager%20kegelige%20Bohrung.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Rillenkugellager nichtrostend
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rillenkugellager/Rillenkugellager%20nichtrostend.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Rillenkugellager zweireihig
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rillenkugellager/Rillenkugellager%20zweireihig.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Rillenkugellager Standard 2RS Stahlk&auml;fig
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rillenkugellager/Rillenkugellager%20Standard%202RS%20Stahlk%C3%A4fig.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Rillenkugellager energieeffizient
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rillenkugellager/Rillenkugellager%20energieeffizient.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Rillenkugellager stromisoliert
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rillenkugellager/Rillenkugellager%20stromisoliert.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Rillenkugellager Standard Offen
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rillenkugellager/Rillenkugellager%20Standard%20Offen.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Rillenkugellager Standard 2RS Kunststoffk&auml;fig
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rillenkugellager/Rillenkugellager%20Standard%202RS%20Kunststoffk%C3%A4fig.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Rillenkugellager Standard RS Kunststoffk&auml;fig
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rillenkugellager/Rillenkugellager%20Standard%20RS%20Kunststoffk%C3%A4fig.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Rillenkugellager Standard Z Metall
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rillenkugellager/Rillenkugellager%20Standard%20Z%20Metall.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Rillenkugellager Standard ZRS Metall
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rillenkugellager/Rillenkugellager%20Standard%20ZRS%20Metall.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Rillenkugellager Standard ZZ Metall
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rillenkugellager/Rillenkugellager%20Standard%20ZZ%20Metall.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Rillenkugellager Standard RS Stahlk&auml;fig
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rillenkugellager/Rillenkugellager%20Standard%20RS%20Stahlk%C3%A4fig.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Rollenketten">
+    <h2>
+     Rollenketten
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Rollenketten DIN 8187
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rollenketten/Rollenketten%20DIN%208187.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Rollenketten Werksnorm
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rollenketten/Rollenketten%20Werksnorm.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Rollenketten DIN 8188
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rollenketten/Rollenketten%20DIN%208188.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Rollenlager">
+    <h2>
+     Rollenlager
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Zylinderrollenlager
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rollenlager/Zylinderrollenlager.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Pendelrollenlager
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rollenlager/Pendelrollenlager.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Axial-Pendelrollenlager
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rollenlager/Axial-Pendelrollenlager.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Rundschn&uuml;re">
+    <h2>
+     Rundschn&uuml;re
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Rundschn&uuml;re NBR
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rundschn%C3%BCre/Rundschn%C3%BCre%20NBR.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Rundschn&uuml;re FKM
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Rundschn%C3%BCre/Rundschn%C3%BCre%20FKM.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Schmalkeilriemen DIN 7753">
+    <h2>
+     Schmalkeilriemen DIN 7753
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       XPA 12,7 mm Breite
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schmalkeilriemen%20DIN%207753/XPA%2012%2C7%20mm%20Breite.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       SPA 12,7 mm Breite
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schmalkeilriemen%20DIN%207753/SPA%2012%2C7%20mm%20Breite.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       SPB 16,3 mm Breite
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schmalkeilriemen%20DIN%207753/SPB%2016%2C3%20mm%20Breite.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       SPC 22 mm Breite
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schmalkeilriemen%20DIN%207753/SPC%2022%20mm%20Breite.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       SPZ 9,7 mm Breite
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schmalkeilriemen%20DIN%207753/SPZ%209%2C7%20mm%20Breite.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       XPB 16,3 mm Breite
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schmalkeilriemen%20DIN%207753/XPB%2016%2C3%20mm%20Breite.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       XPC 22 mm Breite
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schmalkeilriemen%20DIN%207753/XPC%2022%20mm%20Breite.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       XPZ 9,7 mm Breite
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schmalkeilriemen%20DIN%207753/XPZ%209%2C7%20mm%20Breite.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       5VX 15 mm Breite
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schmalkeilriemen%20DIN%207753/5VX%2015%20mm%20Breite.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Schmiertechnik">
+    <h2>
+     Schmiertechnik
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Bel&uuml;ftungsfilter und Entl&uuml;ftungsfilter
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schmiertechnik/Bel%C3%BCftungsfilter%20und%20Entl%C3%BCftungsfilter.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Schmiertechnik
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schmiertechnik/Schmiertechnik.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Schr&auml;gkugellager">
+    <h2>
+     Schr&auml;gkugellager
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Schr&auml;gkugellager zweireihig
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schr%C3%A4gkugellager/Schr%C3%A4gkugellager%20zweireihig.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Schr&auml;gkugellager einreihig
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schr%C3%A4gkugellager/Schr%C3%A4gkugellager%20einreihig.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Schutzkappen f&uuml;r Rollenlagereinheiten geschlossen">
+    <h2>
+     Schutzkappen f&uuml;r Rollenlagereinheiten geschlossen
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Schutzkappen COC Baureihe SSD
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schutzkappen%20f%C3%BCr%20Rollenlagereinheiten%20geschlossen/Schutzkappen%20COC%20Baureihe%20SSD.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Schutzkappen f&uuml;r Rollenlagereinheiten offen">
+    <h2>
+     Schutzkappen f&uuml;r Rollenlagereinheiten offen
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Schutzkappen COC Baureihe SSC
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schutzkappen%20f%C3%BCr%20Rollenlagereinheiten%20offen/Schutzkappen%20COC%20Baureihe%20SSC.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Schutzkappen f&uuml;r Spannlagereinheiten geschlossen">
+    <h2>
+     Schutzkappen f&uuml;r Spannlagereinheiten geschlossen
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Schutzkappen SNR Baureihe SCC
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schutzkappen%20f%C3%BCr%20Spannlagereinheiten%20geschlossen/Schutzkappen%20SNR%20Baureihe%20SCC.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Schutzkappen SNR Baureihe SCCE
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schutzkappen%20f%C3%BCr%20Spannlagereinheiten%20geschlossen/Schutzkappen%20SNR%20Baureihe%20SCCE.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Schutzkappen SNR Baureihe CF
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schutzkappen%20f%C3%BCr%20Spannlagereinheiten%20geschlossen/Schutzkappen%20SNR%20Baureihe%20CF.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Schutzkappen COC Baureihe SD
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schutzkappen%20f%C3%BCr%20Spannlagereinheiten%20geschlossen/Schutzkappen%20COC%20Baureihe%20SD.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Schutzkappen f&uuml;r Spannlagereinheiten offen">
+    <h2>
+     Schutzkappen f&uuml;r Spannlagereinheiten offen
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Schutzkappen NTN Baureihe S
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schutzkappen%20f%C3%BCr%20Spannlagereinheiten%20offen/Schutzkappen%20NTN%20Baureihe%20S.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Schutzkappen SNR Baureihe SCO
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schutzkappen%20f%C3%BCr%20Spannlagereinheiten%20offen/Schutzkappen%20SNR%20Baureihe%20SCO.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Schutzkappen SNR Baureihe CV
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schutzkappen%20f%C3%BCr%20Spannlagereinheiten%20offen/Schutzkappen%20SNR%20Baureihe%20CV.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Schutzkappen SNR Baureihe SCOE
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schutzkappen%20f%C3%BCr%20Spannlagereinheiten%20offen/Schutzkappen%20SNR%20Baureihe%20SCOE.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Schutzkappen SNR Baureihe SCOU
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schutzkappen%20f%C3%BCr%20Spannlagereinheiten%20offen/Schutzkappen%20SNR%20Baureihe%20SCOU.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Schwingungsd&auml;mpfer">
+    <h2>
+     Schwingungsd&auml;mpfer
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Schwerlastlager
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schwingungsd%C3%A4mpfer/Schwerlastlager.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Niederfrequenzlager
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Schwingungsd%C3%A4mpfer/Niederfrequenzlager.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Sicherungsringe DIN 471">
+    <h2>
+     Sicherungsringe DIN 471
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Sicherungsringe DIN 471 Federstahl verzinkt
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Sicherungsringe%20DIN%20471/Sicherungsringe%20DIN%20471%20Federstahl%20verzinkt.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Sicherungsringe DIN 471 Federstahl
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Sicherungsringe%20DIN%20471/Sicherungsringe%20DIN%20471%20Federstahl.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Sicherungsringe DIN 471 verst&auml;rkt Federstahl
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Sicherungsringe%20DIN%20471/Sicherungsringe%20DIN%20471%20verst%C3%A4rkt%20Federstahl.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Sicherungsringe DIN 471 Edelstahl
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Sicherungsringe%20DIN%20471/Sicherungsringe%20DIN%20471%20Edelstahl.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Spann-Geh&auml;useeinheiten">
+    <h2>
+     Spann-Geh&auml;useeinheiten
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Schiebelager Geh&auml;useeinheiten Bauform C f&uuml;r hohe und tiefe Temperaturen
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Spann-Geh%C3%A4useeinheiten/Schiebelager%20Geh%C3%A4useeinheiten%20Bauform%20C%20f%C3%BCr%20hohe%20und%20tiefe%20Temperaturen.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Schiebelager Geh&auml;useeinheiten Bauform C
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Spann-Geh%C3%A4useeinheiten/Schiebelager%20Geh%C3%A4useeinheiten%20Bauform%20C.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Schiebelager Geh&auml;useeinheiten Bauform C f&uuml;r hohe
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Spann-Geh%C3%A4useeinheiten/Schiebelager%20Geh%C3%A4useeinheiten%20Bauform%20C%20f%C3%BCr%20hohe.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Spann-Geh&auml;useeinheiten FOOD">
+    <h2>
+     Spann-Geh&auml;useeinheiten FOOD
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Spann-Geh&auml;useeinheiten FOOD Bauform T
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Spann-Geh%C3%A4useeinheiten%20FOOD/Spann-Geh%C3%A4useeinheiten%20FOOD%20Bauform%20T.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Spannlager, Geh&auml;uselager-Einheiten">
+    <h2>
+     Spannlager, Geh&auml;uselager-Einheiten
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Spannlager
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Spannlager%2C%20Geh%C3%A4uselager-Einheiten/Spannlager.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Spannlagereinheiten">
+    <h2>
+     Spannlagereinheiten
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Flanschlager-Geh&auml;useeinheiten
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Spannlagereinheiten/Flanschlager-Geh%C3%A4useeinheiten.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Spannlagereinheiten/Stehlager-Geh%C3%A4useeinheiten.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Spann-Geh&auml;useeinheiten
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Spannlagereinheiten/Spann-Geh%C3%A4useeinheiten.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Spannlagergeh&auml;use">
+    <h2>
+     Spannlagergeh&auml;use
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Stehlagergeh&auml;use
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Spannlagergeh%C3%A4use/Stehlagergeh%C3%A4use.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Flanschlagergeh&auml;use
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Spannlagergeh%C3%A4use/Flanschlagergeh%C3%A4use.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       H&auml;ngelagergeh&auml;use
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Spannlagergeh%C3%A4use/H%C3%A4ngelagergeh%C3%A4use.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Spanngeh&auml;use
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Spannlagergeh%C3%A4use/Spanngeh%C3%A4use.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Stangendichtungen (Hydraulik)">
+    <h2>
+     Stangendichtungen (Hydraulik)
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Stangendichtungen N25
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangendichtungen%20%28Hydraulik%29/Stangendichtungen%20N25.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stangendichtungen N21
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangendichtungen%20%28Hydraulik%29/Stangendichtungen%20N21.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stangendichtungen N36
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangendichtungen%20%28Hydraulik%29/Stangendichtungen%20N36.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stangendichtungen SNI07
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangendichtungen%20%28Hydraulik%29/Stangendichtungen%20SNI07.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stangendichtungen SNI24
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangendichtungen%20%28Hydraulik%29/Stangendichtungen%20SNI24.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stangendichtungen SNI30
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangendichtungen%20%28Hydraulik%29/Stangendichtungen%20SNI30.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stangendichtungen SNI39
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangendichtungen%20%28Hydraulik%29/Stangendichtungen%20SNI39.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stangendichtungen SNI43
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangendichtungen%20%28Hydraulik%29/Stangendichtungen%20SNI43.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stangendichtungen S72
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangendichtungen%20%28Hydraulik%29/Stangendichtungen%20S72.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stangendichtungen SPOR130
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangendichtungen%20%28Hydraulik%29/Stangendichtungen%20SPOR130.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stangendichtungen SPOR30
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangendichtungen%20%28Hydraulik%29/Stangendichtungen%20SPOR30.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stangendichtungen SPOR31
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangendichtungen%20%28Hydraulik%29/Stangendichtungen%20SPOR31.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stangendichtungen SNI35
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangendichtungen%20%28Hydraulik%29/Stangendichtungen%20SNI35.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stangendichtungen N05
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangendichtungen%20%28Hydraulik%29/Stangendichtungen%20N05.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Stangenf&uuml;hrungsringe">
+    <h2>
+     Stangenf&uuml;hrungsringe
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Stangenf&uuml;hrungsringe FRS05
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stangenf%C3%BChrungsringe/Stangenf%C3%BChrungsringe%20FRS05.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Starre Wellenkupplung">
+    <h2>
+     Starre Wellenkupplung
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Wellenkupplungen CLAMPEX KTR 700
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Starre%20Wellenkupplung/Wellenkupplungen%20CLAMPEX%20KTR%20700.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Stehlager-Geh&auml;useeinheiten">
+    <h2>
+     Stehlager-Geh&auml;useeinheiten
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten Bauform PP
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PP.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten Bauform PH, HP
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PH%2C%20HP.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten Bauform PA, UP
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PA%2C%20UP.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten Bauform PX
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PX.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten Bauform PE
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PE.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten Bauform PAE
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PAE.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten Bauform PG
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PG.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten Bauform PH, HP f&uuml;r hohe und tiefe Temperaturen
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PH%2C%20HP%20f%C3%BCr%20hohe%20und%20tiefe%20Temperaturen.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten Bauform PA, UP f&uuml;r hohe und tiefe Temperaturen
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PA%2C%20UP%20f%C3%BCr%20hohe%20und%20tiefe%20Temperaturen.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten Bauform PG f&uuml;r hohe und tiefe Temperaturen
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PG%20f%C3%BCr%20hohe%20und%20tiefe%20Temperaturen.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten Bauform PLE
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PLE.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten Bauform PLE f&uuml;r hohe und tiefe Temperaturen
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PLE%20f%C3%BCr%20hohe%20und%20tiefe%20Temperaturen.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten Bauform PE f&uuml;r hohe und tiefe Temperaturen
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PE%20f%C3%BCr%20hohe%20und%20tiefe%20Temperaturen.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten Bauform PAE f&uuml;r hohe und tiefe Temperaturen
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PAE%20f%C3%BCr%20hohe%20und%20tiefe%20Temperaturen.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten Bauform PEX
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PEX.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten Bauform P f&uuml;r hohe und tiefe Temperaturen
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20P%20f%C3%BCr%20hohe%20und%20tiefe%20Temperaturen.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten Bauform P
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20P.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten Bauform P f&uuml;r hohe
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20P%20f%C3%BCr%20hohe.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten Bauform PA, UP f&uuml;r hohe
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PA%2C%20UP%20f%C3%BCr%20hohe.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten Bauform PAE f&uuml;r hohe
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PAE%20f%C3%BCr%20hohe.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten Bauform PE f&uuml;r hohe
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PE%20f%C3%BCr%20hohe.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten Bauform PG f&uuml;r hohe
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PG%20f%C3%BCr%20hohe.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten Bauform PH, HP f&uuml;r hohe
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PH%2C%20HP%20f%C3%BCr%20hohe.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten Bauform PLE f&uuml;r hohe
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten/Stehlager-Geh%C3%A4useeinheiten%20Bauform%20PLE%20f%C3%BCr%20hohe.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Stehlager-Geh&auml;useeinheiten FOOD">
+    <h2>
+     Stehlager-Geh&auml;useeinheiten FOOD
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten FOOD Bauform SP
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten%20FOOD/Stehlager-Geh%C3%A4useeinheiten%20FOOD%20Bauform%20SP.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten FOOD Bauform SPA
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten%20FOOD/Stehlager-Geh%C3%A4useeinheiten%20FOOD%20Bauform%20SPA.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten FOOD Bauform SP Saniline
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten%20FOOD/Stehlager-Geh%C3%A4useeinheiten%20FOOD%20Bauform%20SP%20Saniline.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten FOOD Bauform SHP Saniline
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten%20FOOD/Stehlager-Geh%C3%A4useeinheiten%20FOOD%20Bauform%20SHP%20Saniline.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlager-Geh&auml;useeinheiten FOOD Bauform SHPA Saniline
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlager-Geh%C3%A4useeinheiten%20FOOD/Stehlager-Geh%C3%A4useeinheiten%20FOOD%20Bauform%20SHPA%20Saniline.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Stehlagereinheiten CS2EP, CXC2EP">
+    <h2>
+     Stehlagereinheiten CS2EP, CXC2EP
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Stehlagereinheiten CS2EP
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlagereinheiten%20CS2EP%2C%20CXC2EP/Stehlagereinheiten%20CS2EP.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlagereinheiten CXC2EP
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlagereinheiten%20CS2EP%2C%20CXC2EP/Stehlagereinheiten%20CXC2EP.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Stehlagereinheiten CS2P, CXC2P">
+    <h2>
+     Stehlagereinheiten CS2P, CXC2P
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Stehlagereinheiten CS2P
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlagereinheiten%20CS2P%2C%20CXC2P/Stehlagereinheiten%20CS2P.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlagereinheiten CXC2P
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlagereinheiten%20CS2P%2C%20CXC2P/Stehlagereinheiten%20CXC2P.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Stehlagereinheiten CS4EP, CXC4EP">
+    <h2>
+     Stehlagereinheiten CS4EP, CXC4EP
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Stehlagereinheiten CXC4EP
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlagereinheiten%20CS4EP%2C%20CXC4EP/Stehlagereinheiten%20CXC4EP.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlagereinheiten CS4EP
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlagereinheiten%20CS4EP%2C%20CXC4EP/Stehlagereinheiten%20CS4EP.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Stehlagereinheiten CS4P, CXC4P">
+    <h2>
+     Stehlagereinheiten CS4P, CXC4P
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Stehlagereinheiten CXC4P
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlagereinheiten%20CS4P%2C%20CXC4P/Stehlagereinheiten%20CXC4P.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlagereinheiten CS4P
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlagereinheiten%20CS4P%2C%20CXC4P/Stehlagereinheiten%20CS4P.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Stehlagereinheiten f&uuml;r Pendelrollenlager">
+    <h2>
+     Stehlagereinheiten f&uuml;r Pendelrollenlager
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Stehlagereinheiten CX2SN
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlagereinheiten%20f%C3%BCr%20Pendelrollenlager/Stehlagereinheiten%20CX2SN.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlagereinheiten CX2SAF
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlagereinheiten%20f%C3%BCr%20Pendelrollenlager/Stehlagereinheiten%20CX2SAF.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Stehlagereinheiten CX4SAF
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Stehlagereinheiten%20f%C3%BCr%20Pendelrollenlager/Stehlagereinheiten%20CX4SAF.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Strickhandschuhe">
+    <h2>
+     Strickhandschuhe
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Feinstrickhandschuhe FOAM SANDY
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Strickhandschuhe/Feinstrickhandschuhe%20FOAM%20SANDY.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Feinstrickhandschuhe NITRIL GRID
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Strickhandschuhe/Feinstrickhandschuhe%20NITRIL%20GRID.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="V-Packungen">
+    <h2>
+     V-Packungen
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Dachmannschettens&auml;tze KDS01
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/V-Packungen/Dachmannschettens%C3%A4tze%20KDS01.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Dachmannschettens&auml;tze SDS01 3_2
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/V-Packungen/Dachmannschettens%C3%A4tze%20SDS01%203_2.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="V-Ringe VA">
+    <h2>
+     V-Ringe VA
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       V-Ringe VA NBR
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/V-Ringe%20VA/V-Ringe%20VA%20NBR.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       V-Ringe VA FKM
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/V-Ringe%20VA/V-Ringe%20VA%20FKM.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="V-Ringe VL">
+    <h2>
+     V-Ringe VL
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       V-Ringe VL NBR
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/V-Ringe%20VL/V-Ringe%20VL%20NBR.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       V-Ringe VL FKM
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/V-Ringe%20VL/V-Ringe%20VL%20FKM.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="V-Ringe VS">
+    <h2>
+     V-Ringe VS
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       V-Ringe VS NBR
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/V-Ringe%20VS/V-Ringe%20VS%20NBR.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       V-Ringe VS FKM
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/V-Ringe%20VS/V-Ringe%20VS%20FKM.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Verschlu&szlig;glieder">
+    <h2>
+     Verschlu&szlig;glieder
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Verschlu&szlig;glieder DIN 8187
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Verschlu%C3%9Fglieder/Verschlu%C3%9Fglieder%20DIN%208187.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Verschlu&szlig;glieder Werksnorm
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Verschlu%C3%9Fglieder/Verschlu%C3%9Fglieder%20Werksnorm.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Verschlu&szlig;glieder DIN 8188
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Verschlu%C3%9Fglieder/Verschlu%C3%9Fglieder%20DIN%208188.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Welle-Nabe-Verbindungen">
+    <h2>
+     Welle-Nabe-Verbindungen
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Taper-Buchsen
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Welle-Nabe-Verbindungen/Taper-Buchsen.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Einschweissnaben
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Welle-Nabe-Verbindungen/Einschweissnaben.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Wellendichtringe">
+    <h2>
+     Wellendichtringe
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Wellendichtringe WBO, B1OF
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe/Wellendichtringe%20WBO%2C%20B1OF.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Wellendichtringe WCS, B2SL
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe/Wellendichtringe%20WCS%2C%20B2SL.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Wellendichtringe WAOK, BAOF
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe/Wellendichtringe%20WAOK%2C%20BAOF.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Wellendichtringe WAO
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe/Wellendichtringe%20WAO.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Wellendichtringe WAB
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe/Wellendichtringe%20WAB.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Wellendichtringe WCXS
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe/Wellendichtringe%20WCXS.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Wellendichtringe WAK
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe/Wellendichtringe%20WAK.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Wellendichtringe WAY, BAB
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe/Wellendichtringe%20WAY%2C%20BAB.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Wellendichtringe WAS, BASL
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe/Wellendichtringe%20WAS%2C%20BASL.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Wellendichtringe WA, BA">
+    <h2>
+     Wellendichtringe WA, BA
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Wellendichtringe WA NBR, BA NBR
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe%20WA%2C%20BA/Wellendichtringe%20WA%20NBR%2C%20BA%20NBR.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Wellendichtringe WA FKM, BA FKM
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe%20WA%2C%20BA/Wellendichtringe%20WA%20FKM%2C%20BA%20FKM.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Wellendichtringe WAS, BASL">
+    <h2>
+     Wellendichtringe WAS, BASL
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Wellendichtringe WAS NBR, BASL NBR
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe%20WAS%2C%20BASL/Wellendichtringe%20WAS%20NBR%2C%20BASL%20NBR.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Wellendichtringe WAS FKM, BASL FKM
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe%20WAS%2C%20BASL/Wellendichtringe%20WAS%20FKM%2C%20BASL%20FKM.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Wellendichtringe WASY, BABSL">
+    <h2>
+     Wellendichtringe WASY, BABSL
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Wellendichtringe WASY NBR, BABSL NBR
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe%20WASY%2C%20BABSL/Wellendichtringe%20WASY%20NBR%2C%20BABSL%20NBR.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Wellendichtringe WASY FKM, BABSL FKM
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe%20WASY%2C%20BABSL/Wellendichtringe%20WASY%20FKM%2C%20BABSL%20FKM.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Wellendichtringe WB, B1">
+    <h2>
+     Wellendichtringe WB, B1
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Wellendichtringe WB NBR, B1 NBR
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe%20WB%2C%20B1/Wellendichtringe%20WB%20NBR%2C%20B1%20NBR.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Wellendichtringe WB FKM, B1 FKM
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe%20WB%2C%20B1/Wellendichtringe%20WB%20FKM%2C%20B1%20FKM.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Wellendichtringe WBS, B1SL">
+    <h2>
+     Wellendichtringe WBS, B1SL
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Wellendichtringe WBS NBR, B1SL NBR
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe%20WBS%2C%20B1SL/Wellendichtringe%20WBS%20NBR%2C%20B1SL%20NBR.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Wellendichtringe WBS FKM, B1SL FKM
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe%20WBS%2C%20B1SL/Wellendichtringe%20WBS%20FKM%2C%20B1SL%20FKM.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="Wellendichtringe WC, B2">
+    <h2>
+     Wellendichtringe WC, B2
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Wellendichtringe WC NBR, B2 NBR
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe%20WC%2C%20B2/Wellendichtringe%20WC%20NBR%2C%20B2%20NBR.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Wellendichtringe WC FKM, B2 FKM
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/Wellendichtringe%20WC%2C%20B2/Wellendichtringe%20WC%20FKM%2C%20B2%20FKM.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="W&auml;lz- und Gleitlager">
+    <h2>
+     W&auml;lz- und Gleitlager
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Geh&auml;use-Reparaturh&uuml;lsen HR-Sleeves
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/W%C3%A4lz-%20und%20Gleitlager/Geh%C3%A4use-Reparaturh%C3%BClsen%20HR-Sleeves.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       W&auml;lz- und Gleitlager
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/W%C3%A4lz-%20und%20Gleitlager/W%C3%A4lz-%20und%20Gleitlager.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="W&auml;lzlagerzubeh&ouml;r">
+    <h2>
+     W&auml;lzlagerzubeh&ouml;r
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       Spannh&uuml;lsen
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/W%C3%A4lzlagerzubeh%C3%B6r/Spannh%C3%BClsen.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Abziehh&uuml;lsen
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/W%C3%A4lzlagerzubeh%C3%B6r/Abziehh%C3%BClsen.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Nutmuttern DIN 981
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/W%C3%A4lzlagerzubeh%C3%B6r/Nutmuttern%20DIN%20981.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       Sicherungsbleche DIN 5406
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/W%C3%A4lzlagerzubeh%C3%B6r/Sicherungsbleche%20DIN%205406.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="X-Ringe">
+    <h2>
+     X-Ringe
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       X-Ringe NBR
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/X-Ringe/X-Ringe%20NBR.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+     <li>
+      <span class="item-name">
+       X-Ringe FKM
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/X-Ringe/X-Ringe%20FKM.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <div class="section" id="statische Dichtungen">
+    <h2>
+     statische Dichtungen
+    </h2>
+    <ul>
+     <li>
+      <span class="item-name">
+       O-Ringe BIB
+      </span>
+      <a href="https://d205374-my.sharepoint.com/personal/cyriac_hagenauer_tech/Documents/Desktop/datenbank%20work%202/Master_kategorie/Sub_kategorie_mit_gleich eigenschafte-python/statische%20Dichtungen/O-Ringe%20BIB.csv?web=1">
+       ➡️ View Daten
+      </a>
+     </li>
+    </ul>
+   </div>
+   <p class="muted" hidden="" id="noResults">
+    Keine Treffer. Passen Sie den Filter an.
+   </p>
+  </div>
+  <script>
+   (function () {
+      // Turn every existing ".section" into an accessible accordion.
+      // If a section already contains an <h2> and <ul>, we will create the header button and content wrapper for you.
+      const sections = Array.from(document.querySelectorAll('.section'));
+
+      for (const sec of sections) {
+        // Skip if already processed (has .section-header)
+        if (sec.querySelector('.section-header')) continue;
+
+        const titleEl = sec.querySelector('h2');
+        const listEl  = sec.querySelector('ul');
+
+        if (!titleEl) continue;
+
+        // Build header button
+        const headerBtn = document.createElement('button');
+        headerBtn.className = 'section-header';
+        headerBtn.type = 'button';
+
+        const chev = document.createElement('span');
+        chev.className = 'chev'; chev.setAttribute('aria-hidden','true');
+
+        const titleSpan = document.createElement('span');
+        titleSpan.className = 'section-title';
+        titleSpan.textContent = titleEl.textContent.trim();
+
+        const count = document.createElement('span');
+        count.className = 'count';
+        count.setAttribute('data-count','');
+        count.textContent = '–';
+
+        headerBtn.append(chev, titleSpan, count);
+
+        // Content wrapper
+        const content = document.createElement('div');
+        const panelId = (sec.id ? sec.id : titleSpan.textContent.toLowerCase().replace(/\s+/g,'-')) + '-panel';
+        content.className = 'section-content';
+        content.id = panelId;
+        content.setAttribute('role','region');
+
+        // Move list into content
+        if (listEl) content.appendChild(listEl);
+
+        // Insert into section
+        sec.innerHTML = ''; // clear original
+        sec.setAttribute('aria-expanded', 'false');
+        sec.append(headerBtn, content);
+
+        // Link ARIA
+        if (sec.id) headerBtn.setAttribute('aria-controls', panelId);
+      }
+
+      // Count items per section
+      function updateCounts(){
+        for (const sec of document.querySelectorAll('.section')) {
+          const ul = sec.querySelector('ul');
+          const count = sec.querySelector('[data-count]');
+          if (!count) continue;
+          const n = ul ? ul.querySelectorAll('li').length : 0;
+          count.textContent = n.toString();
+        }
+      }
+      updateCounts();
+
+      // Toggle behavior
+      function toggleSection(sec, expand){
+        const isOpen = sec.getAttribute('aria-expanded') === 'true';
+        const next = (typeof expand === 'boolean') ? expand : !isOpen;
+        sec.setAttribute('aria-expanded', next ? 'true' : 'false');
+      }
+
+      // Click handlers
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.section-header');
+        if (!btn) return;
+        const sec = btn.closest('.section');
+        toggleSection(sec);
+      });
+
+      // Keyboard: toggle with Enter/Space (native button already handles), Arrow Up/Down to move focus
+      document.addEventListener('keydown', (e) => {
+        const btn = e.target.closest('.section-header');
+        if (!btn) return;
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          const headers = Array.from(document.querySelectorAll('.section-header'));
+          const i = headers.indexOf(btn);
+          const j = e.key === 'ArrowDown' ? Math.min(i+1, headers.length-1) : Math.max(i-1,0);
+          headers[j].focus();
+        }
+      });
+
+      // Hash deep-link: if URL has #id, open that section
+      if (location.hash) {
+        const target = document.querySelector(location.hash);
+        if (target && target.classList.contains('section')) {
+          toggleSection(target, true);
+          const header = target.querySelector('.section-header');
+          if (header) header.scrollIntoView({behavior:'smooth', block:'start'});
+        }
+      }
+
+      // Expand/Collapse All
+      const expandAllBtn = document.getElementById('expandAll');
+      const collapseAllBtn = document.getElementById('collapseAll');
+      expandAllBtn?.addEventListener('click', () => {
+        document.querySelectorAll('.section').forEach(sec => toggleSection(sec, true));
+      });
+      collapseAllBtn?.addEventListener('click', () => {
+        document.querySelectorAll('.section').forEach(sec => toggleSection(sec, false));
+      });
+
+      // Filter (search across titles and list items)
+      const input = document.getElementById('search');
+      const clearBtn = document.getElementById('clearFilter');
+      const noResults = document.getElementById('noResults');
+
+      function applyFilter(q){
+        q = (q || '').trim().toLowerCase();
+        let visibleCount = 0;
+
+        document.querySelectorAll('.section').forEach(sec => {
+          const title = (sec.querySelector('.section-title')?.textContent || '').toLowerCase();
+
+          // Match in title OR any li text
+          const items = Array.from(sec.querySelectorAll('li'));
+          const matchesItem = items.some(li => li.textContent.toLowerCase().includes(q));
+          const matchesTitle = title.includes(q);
+
+          // Show/hide items inside matched sections
+          let sectionHasMatch = false;
+          if (q) {
+            items.forEach(li => {
+              const hit = li.textContent.toLowerCase().includes(q);
+              li.style.display = hit ? '' : 'none';
+              if (hit) sectionHasMatch = true;
+            });
+          } else {
+            items.forEach(li => li.style.display = '');
+          }
+
+          const showSection = !q || matchesTitle || sectionHasMatch;
+          sec.hidden = !showSection;
+          if (showSection) visibleCount++;
+
+          // If filtering, auto-expand matched sections
+          if (q && showSection) {
+            sec.setAttribute('aria-expanded','true');
+          }
+        });
+
+        noResults.hidden = visibleCount > 0;
+        updateCounts();
+      }
+
+      input?.addEventListener('input', (e) => applyFilter(e.target.value));
+      clearBtn?.addEventListener('click', () => {
+        input.value = '';
+        applyFilter('');
+      });
+
+      // Initial: all sections visible, lists collapsed
+      document.querySelectorAll('.section').forEach(sec => sec.setAttribute('aria-expanded','false'));
+    })();
+  </script>
+
+  /* ----------adds numbering,adds Bemerkung input + Status select,handles the code modal---------- */
+
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const STORAGE_KEY = 'main_kategorie_group_3_states';
+
+  function loadStates() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function saveStates(states) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(states));
+  }
+
+  const states = loadStates();
+
+  /* ---------- CODE MODAL (for status change) ---------- */
+  const codeModal      = document.getElementById('codeModal');
+  const codeInput      = document.getElementById('codeInputModal');
+  const codeError      = document.getElementById('codeError');
+  const codeOk         = document.getElementById('codeOk');
+  const codeCancel     = document.getElementById('codeCancel');
+  const codeBackdrop   = codeModal.querySelector('.modal-backdrop');
+
+  let codeOnSuccess = null;
+  let codeOnCancel  = null;
+
+  function openCodeModal(onSuccess, onCancel){
+    codeOnSuccess = onSuccess;
+    codeOnCancel  = onCancel;
+    codeInput.value = '';
+    codeError.textContent = '';
+    codeModal.classList.remove('hidden');
+    codeInput.focus();
+  }
+
+  function closeCodeModal(){
+    codeModal.classList.add('hidden');
+    codeOnSuccess = null;
+    codeOnCancel  = null;
+  }
+
+  codeOk.addEventListener('click', () => {
+    if (codeInput.value.trim() === 'Fertig') {
+      if (codeOnSuccess) codeOnSuccess();
+      closeCodeModal();
+    } else {
+      codeError.textContent = 'Falscher Code.';
+    }
+  });
+
+  const cancelCode = () => {
+    if (codeOnCancel) codeOnCancel();
+    closeCodeModal();
+  };
+  codeCancel.addEventListener('click', cancelCode);
+  codeBackdrop.addEventListener('click', cancelCode);
+
+  codeInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      codeOk.click();
+    } else if (e.key === 'Escape') {
+      cancelCode();
+    }
+  });
+
+  /* ---------- BEMERKUNG MODAL ---------- */
+  const remarkModal    = document.getElementById('remarkModal');
+  const remarkTextarea = document.getElementById('remarkTextarea');
+  const remarkCancel   = document.getElementById('remarkCancel');
+  const remarkOk       = document.getElementById('remarkOk');
+  const remarkBackdrop = remarkModal.querySelector('.modal-backdrop');
+
+  let remarkOnSave = null;
+
+  function openRemarkModal(initialText, onSave){
+    remarkOnSave = onSave;
+    remarkTextarea.value = initialText || '';
+    remarkModal.classList.remove('hidden');
+    remarkTextarea.focus();
+  }
+
+  function closeRemarkModal(){
+    remarkModal.classList.add('hidden');
+    remarkOnSave = null;
+  }
+
+  remarkOk.addEventListener('click', () => {
+    if (remarkOnSave) remarkOnSave(remarkTextarea.value);
+    closeRemarkModal();
+  });
+
+  const cancelRemark = () => {
+    closeRemarkModal();
+  };
+  remarkCancel.addEventListener('click', cancelRemark);
+  remarkBackdrop.addEventListener('click', cancelRemark);
+
+  remarkTextarea.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      cancelRemark();
+    }
+  });
+
+  /* ---------- Helpers ---------- */
+  function applyStatusAppearance(li, statusSelect, status){
+    li.classList.remove('status-not-started','status-in-progress','status-completed');
+
+    if (status === 'not_started') {
+      li.classList.add('status-not-started');
+    } else if (status === 'in_arbeit') {
+      li.classList.add('status-in-progress');
+    } else if (status === 'abgeschlossen') {
+      li.classList.add('status-completed');
+    }
+  }
+
+  /* ---------- Build rows: numbering + controls ---------- */
+  document.querySelectorAll('.section ul').forEach(ul => {
+    let counter = 1;
+
+    ul.querySelectorAll('li').forEach(li => {
+      const nameSpan = li.querySelector('.item-name');
+      const link     = li.querySelector('a');
+      if (!nameSpan || !link) return;
+
+      // numbering
+      const indexSpan = document.createElement('span');
+      indexSpan.className = 'item-index';
+      indexSpan.textContent = counter + '.';
+      counter += 1;
+      li.insertBefore(indexSpan, nameSpan);
+
+      const itemId = nameSpan.textContent.trim();
+
+      // controls: Bemerkung button + status select
+      const controls = document.createElement('div');
+      controls.className = 'item-controls';
+      controls.innerHTML = `
+        <button type="button" class="note-btn">Bemerkung</button>
+        <label>aktueller Status:
+          <select class="status-select">
+            <option value="not_started">noch nicht angefangen</option>
+            <option value="in_arbeit">noch in Arbeit</option>
+            <option value="abgeschlossen">abgeschlossen</option>
+          </select>
+        </label>
+      `;
+      li.appendChild(controls);
+
+      const noteBtn      = controls.querySelector('.note-btn');
+      const statusSelect = controls.querySelector('.status-select');
+
+      // restore saved state
+      const saved = states[itemId] || {};
+      let remarkText   = saved.remark || '';
+      let currentStatus= saved.status || 'not_started';
+
+      statusSelect.value = currentStatus;
+      applyStatusAppearance(li, statusSelect, currentStatus);
+
+      function updateState(){
+        states[itemId] = {
+          remark: remarkText,
+          status: currentStatus
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(states));
+      }
+
+      // initial note button look + tooltip
+      function refreshNoteButton(){
+        noteBtn.classList.toggle('has-note', !!remarkText);
+        noteBtn.title = remarkText || 'Keine Bemerkung';
+      }
+      refreshNoteButton();
+
+      // Bemerkung button => open modal
+      noteBtn.addEventListener('click', () => {
+        openRemarkModal(remarkText, newText => {
+          remarkText = newText || '';
+          refreshNoteButton();
+          updateState();
+        });
+      });
+
+      // Status change => always ask for code
+      statusSelect.addEventListener('change', () => {
+        const newStatus = statusSelect.value;
+        if (newStatus === currentStatus) return;
+
+        // ask for code every time
+        openCodeModal(
+          () => { // success
+            currentStatus = newStatus;
+            applyStatusAppearance(li, statusSelect, currentStatus);
+            updateState();
+          },
+          () => { // cancel
+            statusSelect.value = currentStatus;
+          }
+        );
+      });
+    });
+  });
+});
+</script>
+
+
+<!-- Modal for Abschluss-Code -->
+<div id="codeModal" class="modal hidden">
+  <div class="modal-backdrop"></div>
+  <div class="modal-dialog">
+    <h3 class="modal-title">Arbeit abschließen</h3>
+    <div class="modal-body">
+      <p>Bitte Sicherheitscode eingeben, um den Status auf <strong>abgeschlossen</strong> zu setzen.</p>
+      <input type="password" id="codeInputModal" placeholder="Fertig" />
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="modal-btn" id="codeCancel">Abbrechen</button>
+      <button type="button" class="modal-btn primary" id="codeOk">Bestätigen</button>
+    </div>
+    <p class="modal-error" id="codeError"></p>
+  </div>
+</div>
+<!-- Modal for Bemerkung -->
+<div id="remarkModal" class="modal hidden">
+  <div class="modal-backdrop"></div>
+  <div class="modal-dialog">
+    <h3 class="modal-title">Bemerkung</h3>
+    <div class="modal-body">
+      <p>Hier kannst du die Bemerkung für diese Kategorie bearbeiten.</p>
+      <textarea id="remarkTextarea" rows="4" placeholder="Bemerkung eingeben ..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="modal-btn" id="remarkCancel">Abbrechen</button>
+      <button type="button" class="modal-btn primary" id="remarkOk">Bestätigen</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

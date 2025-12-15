@@ -1,0 +1,157 @@
+:root {
+  --bg: #0f172a;           /* slate-900 */
+  --panel: #111827;        /* gray-900 */
+  --muted: #374151;        /* gray-700 */
+  --text: #e5e7eb;         /* gray-200 */
+  --accent: #22d3ee;       /* cyan-400 */
+  --accent-2: #60a5fa;     /* blue-400 */
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans";
+  background: radial-gradient(1200px 600px at 80% -10%, rgba(34,211,238,.15), transparent 60%), var(--bg);
+  color: var(--text);
+}
+header { padding: 24px 20px 12px; }
+
+h1 { margin: 0 0 8px; font-weight: 800; letter-spacing:.2px; }
+.sub { color:#9ca3af; font-size: 14px; }
+
+.wrap { max-width: 1200px; margin: 0 auto; padding: 16px 20px 40px; }
+
+.toolbar { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; margin-bottom: 12px; }
+.controls { display:flex; flex-wrap: wrap; gap: 8px; }
+
+input[type="text"], .btn {
+  background:#0b1220; border:1px solid #1f2937; color:var(--text);
+  padding:10px 12px; border-radius:10px; outline:none; height:40px;
+}
+input[type="text"]:focus { border-color: var(--accent); box-shadow:0 0 0 3px rgba(34,211,238,.12); }
+
+.btn { cursor:pointer; user-select:none; transition: .15s ease;
+  display:inline-flex; align-items:center; gap:8px; font-weight:600; }
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn.primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); border-color: transparent; color:#08121d; }
+.btn.ghost { background: #0b1220; }
+
+.panel { background: #0b1220d9; border:1px solid #1f2937; border-radius:14px; box-shadow: 0 10px 30px rgba(0,0,0,.25); overflow: hidden; }
+
+.filters { display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; padding:12px; border-bottom:1px solid #1f2937; }
+
+.table-wrap { max-height: 60vh; overflow:auto; }
+
+/* Table with clear column separators */
+
+.table-wrap table { width:100%; border-collapse: separate; border-spacing: 0; }
+.table-wrap thead th {
+  background:#0f172a; position: sticky; top:0; z-index: 1; text-align:left; padding:12px; font-size:14px; border-bottom:1px solid #1f2937;
+}
+.table-wrap tbody td { padding:10px 12px; border-bottom:1px dashed #1f2937; }
+.table-wrap tbody tr:hover { background:#0f172a; }
+
+/* vertical separators between columns */
+.table-wrap thead th:not(:last-child),
+.table-wrap tbody td:not(:last-child) {
+  border-right: 1px solid #1f2937;
+}
+
+/* editable cells */
+.table-wrap td[contenteditable="true"] { outline: none; }
+
+.pager { display:flex; align-items:center; gap:8px; padding:10px 12px; border-top:1px solid #1f2937; background:#0b1220; }
+.pager .page-btn { padding:8px 10px; background:#0b1220; border:1px solid #1f2937; border-radius:8px; cursor:pointer; color:var(--text); }
+.pager .page-btn[disabled] { opacity:.5; cursor:not-allowed; }
+
+.note { font-size:12px; color:#9ca3af; margin-top:6px; }
+.count { color:#a7f3d0; font-weight:700; }
+
+
+
+
+
+
+
+/* Numbered pager */
+.page-numbers {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 8px;
+  flex-wrap: wrap;
+}
+
+.page-numbers .num-btn,
+.page-numbers .ellipsis {
+  padding: 6px 10px;
+  border: 1px solid #1f2937;
+  border-radius: 8px;
+  background: #0b1220;
+  color: var(--text);
+  line-height: 1;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+}
+
+.page-numbers .num-btn {
+  cursor: pointer;
+}
+
+.page-numbers .num-btn.active {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #08121d;
+  border-color: transparent;
+  pointer-events: none;
+}
+
+.page-numbers .ellipsis {
+  opacity: .6;
+  border-style: dashed;
+}
+
+
+/* existing variables and styles… */
+
+/* small additions for edit/save visuals */
+.btn.danger {
+  background: linear-gradient(135deg, #fca5a5, #ef4444);
+  border-color: transparent;
+  color: #180b0b;
+}
+
+.panel.editing {
+  outline: 2px dashed var(--accent);
+  outline-offset: -2px;
+}
+
+/* make non-editable cells look normal (no focus ring) */
+.table-wrap td[contenteditable="false"] {
+  user-select: text;
+}
+
+/* optional: subtle highlight when editing */
+.table-wrap td[contenteditable="true"] {
+  background: #0f172a;
+}
+
+
+
+.btn.danger {
+  background: linear-gradient(135deg, #fca5a5, #ef4444);
+  border-color: transparent;
+  color: #180b0b;
+}
+.panel.editing {
+  outline: 2px dashed var(--accent);
+  outline-offset: -2px;
+}
+.table-wrap td[contenteditable="true"] {
+  background: #0f172a;
+}
+
+
+
+

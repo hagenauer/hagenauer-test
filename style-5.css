@@ -1,0 +1,190 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+/* =========================
+   Design Tokens / Theming
+   ========================= */
+:root {
+  --bg: #f7f7fb;
+  --bg-soft: #ffffffee;
+  --text: #111827;
+  --muted: #4b5563;
+  --line: #e5e7eb;
+  --brand: #2563eb;
+  --brand-2: #1d4ed8;
+  --shadow: 0 8px 24px rgba(0,0,0,0.08);
+
+  /* Hero background image (use relative path!) */
+  --hero-image: url('lager.png');
+}
+
+:root[data-theme="dark"] {
+  --bg: #0b1220;
+  --bg-soft: #0f172acc;
+  --text: #e5e7eb;
+  --muted: #9ca3af;
+  --line: #1f2937;
+  --brand: #60a5fa;
+  --brand-2: #93c5fd;
+  --shadow: 0 10px 28px rgba(0,0,0,0.35);
+}
+
+:root[data-theme="light"] {
+  /* same as default :root but explicitly set if needed */
+}
+
+/* Global */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  margin: 0;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Containers */
+.container {
+  width: min(1100px, 92vw);
+  margin-inline: auto;
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px; height: 1px; overflow: hidden;
+}
+.skip-link:focus {
+  left: 12px; top: 12px;
+  width: auto; height: auto; padding: 10px 14px;
+  background: #fff; color: #111; border-radius: 8px;
+  z-index: 10000;
+}
+
+/* Header */
+.site-header {
+  position: sticky; top: 0; z-index: 1000;
+  background: color-mix(in oklab, var(--bg) 88%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+.header-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 0;
+}
+.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); }
+.brand-logo { width: 42px; height: 42px; object-fit: contain; border-radius: 8px; }
+.brand-text { display: grid; line-height: 1.1; }
+.brand-title { font-weight: 800; font-size: 18px; letter-spacing: .2px; }
+.brand-sub   { font-weight: 600; font-size: 12px; color: var(--muted); }
+
+.nav { display: flex; align-items: center; gap: 10px; }
+.nav-link {
+  text-decoration: none;
+  color: var(--text);
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background .2s ease, transform .2s ease, color .2s ease;
+}
+.nav-link:hover { background: color-mix(in oklab, var(--brand) 12%, transparent); color: var(--brand-2); transform: translateY(-1px); }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px; border: 0; cursor: pointer; font-weight: 700;
+  padding: 10px 16px; border-radius: 10px; text-decoration: none;
+  box-shadow: 0 4px 10px rgba(0,0,0,.08);
+  transition: transform .15s ease, box-shadow .2s ease, background .2s ease, color .2s ease;
+}
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: linear-gradient(135deg, var(--brand), var(--brand-2)); color: #fff; }
+.btn-primary:hover { box-shadow: 0 8px 18px rgba(37,99,235,.35); }
+.btn-dark { background: #111827; color: #fff; }
+.btn-dark:hover { box-shadow: 0 8px 18px rgba(0,0,0,.35); }
+.btn-outline {
+  background: linear-gradient(to right, color-mix(in oklab, var(--brand) 8%, #fff), color-mix(in oklab, var(--brand-2) 8%, #fff));
+  color: var(--brand-2);
+}
+.btn-outline:hover { transform: translateY(-1px); }
+.btn-ghost {
+  background: transparent; color: var(--text); padding: 8px 10px; border-radius: 8px;
+}
+.btn-ghost:hover { background: color-mix(in oklab, var(--brand) 12%, transparent); }
+
+/* Hero */
+.hero {
+  position: relative; overflow: hidden;
+  border-bottom: 1px solid var(--line);
+  background:
+    /* here the percentage is responssible for the background transparancy rate (45% and 85% is the optimum*/
+    linear-gradient(180deg, color-mix(in oklab, var(--bg) 30%, transparent), color-mix(in oklab, var(--bg) 50%, transparent)),
+    var(--hero-image) no-repeat center/cover fixed;
+}
+.hero::after {
+  content:"";
+  position: absolute; inset: 0;
+  background: radial-gradient(1000px 400px at 20% -20%, color-mix(in oklab, var(--brand) 12%, transparent), transparent 40%),
+              radial-gradient(800px 300px at 120% 20%, color-mix(in oklab, var(--brand-2) 12%, transparent), transparent 45%);
+  pointer-events: none;
+}
+.hero-inner { padding: clamp(48px, 8vw, 96px) 0; text-align: center; position: relative; z-index: 1; }
+.hero-title {
+  font-size: clamp(28px, 4.8vw, 44px);
+  font-weight: 800; letter-spacing: .3px; margin: 0 0 10px;
+  text-shadow: 0 2px 16px rgba(0,0,0,.1);
+}
+.hero-subtitle {
+  margin: 0 auto 22px; max-width: 760px; color: var(--muted); font-size: clamp(16px, 2.4vw, 18px);
+}
+.hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+/* Section */
+.overview-section {
+  margin: 32px 0 64px;
+}
+.section-head { text-align: center; margin-bottom: 16px; }
+.section-head h2 {
+  font-size: clamp(22px, 3.6vw, 28px);
+  margin: 0 0 6px;
+}
+.section-sub { color: var(--muted); margin: 0; }
+
+/* Cards */
+.card-grid {
+  list-style: none; padding: 0; margin: 22px 0 0;
+  display: grid; grid-template-columns: repeat(1, minmax(0,1fr)); gap: 16px;
+}
+@media (min-width: 720px) {
+  .card-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+@media (min-width: 1024px) {
+  .card-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+}
+.card {
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: 16px; box-shadow: var(--shadow);
+  display: flex; flex-direction: column; justify-content: space-between; min-height: 180px;
+  transition: transform .2s ease, box-shadow .25s ease, border-color .2s ease;
+}
+.card:hover { transform: translateY(-3px); box-shadow: 0 14px 32px rgba(0,0,0,.12); border-color: color-mix(in oklab, var(--brand) 25%, var(--line)); }
+.card-body { padding: 18px 18px 6px; }
+.card-actions { padding: 0 18px 18px; }
+.card-icon { font-size: 26px; line-height: 1; margin-bottom: 8px; }
+.card-title { margin: 0 0 6px; font-size: 18px; font-weight: 700; }
+.card-text { margin: 0; color: var(--muted); }
+
+/* Footer */
+.site-footer {
+  border-top: 1px solid var(--line);
+  background: color-mix(in oklab, var(--bg) 92%, transparent);
+}
+.footer-inner { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 0; flex-wrap: wrap; }
+.footer-left { color: var(--muted); }
+.footer-right { color: var(--muted); }
+
+/* Utility (optional) */
+.hidden { display: none !important; }
