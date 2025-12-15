@@ -4040,19 +4040,28 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       select.onchange = () => {
         const next = select.value;
-        openCodeModal(
-          async () => {
-            status = next;
-            applyStatusAppearance(li, status);
-            await saveToDB(itemId, status, remark);
+
+         // Only require code when setting "abgeschlossen"
+         if (next !== "abgeschlossen") {
+           status = next;
+           applyStatusAppearance(li, status);
+           saveToDB(itemId, status, remark);
+           return;
+          }
+
+          openCodeModal(
+            async () => {
+              status = next;
+              applyStatusAppearance(li, status);
+              await saveToDB(itemId, status, remark);
           },
           () => select.value = status
-        );
-      };
+        ); 
+       };     
     });
   });
+}); 
 
-});
 </script>
 
 
