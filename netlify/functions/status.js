@@ -1,24 +1,29 @@
-const { Client } = require("pg");
+const { Pool } = require("pg");
 
-exports.handler = async (event, context) => {
-  const client = new Client({
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false },
-  });
+const headers = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+};
 
-  const headers = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
-  };
-
+exports.handler = async (event) => {
   // Required for CORS
   if (event.httpMethod === "OPTIONS") {
     return { statusCode: 200, headers };
   }
 
+  // Create pool per invocation (Netlify serverless friendly)
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false },
+    // Optional: avoids long hangs
+    connectionTimeoutMillis: 8000,
+  });
+
+  let client;
+
   try {
-    await client.connect();
+    client = await pool.connect();
 
     // -------- GET --------
     if (event.httpMethod === "GET") {
@@ -26,9 +31,8 @@ exports.handler = async (event, context) => {
       const itemId = params.itemId;
 
       if (itemId) {
-        // Fetch one item
         const result = await client.query(
-          "SELECT item_id, status, remark, updated_at FROM item_states WHERE item_id = $1",
+          "SELECT item_id, status, remark, updated_at FROM public.item_states WHERE item_id = $1",
           [itemId]
         );
         return {
@@ -37,9 +41,8 @@ exports.handler = async (event, context) => {
           body: JSON.stringify(result.rows[0] || null),
         };
       } else {
-        // Fetch all items
         const result = await client.query(
-          "SELECT item_id, status, remark, updated_at FROM item_states"
+          "SELECT item_id, status, remark, updated_at FROM public.item_states"
         );
 
         const map = {};
@@ -62,7 +65,6 @@ exports.handler = async (event, context) => {
     // -------- POST --------
     if (event.httpMethod === "POST") {
       const data = JSON.parse(event.body || "{}");
-
       const { itemId, status, remark } = data;
 
       if (!itemId || !status) {
@@ -75,8 +77,8 @@ exports.handler = async (event, context) => {
 
       const result = await client.query(
         `
-        INSERT INTO item_states (item_id, status, remark)
-        VALUES ($1, $2, $3)
+        INSERT INTO public.item_states (item_id, status, remark, updated_at)
+        VALUES ($1, $2, $3, NOW())
         ON CONFLICT (item_id)
         DO UPDATE SET status = EXCLUDED.status,
                       remark = EXCLUDED.remark,
@@ -96,8 +98,22 @@ exports.handler = async (event, context) => {
     return { statusCode: 405, headers, body: "Method Not Allowed" };
   } catch (error) {
     console.error("Error in Netlify function:", error);
-    return { statusCode: 500, headers, body: "Server error" };
+
+    // Return real error so you can see it in the browser/Network tab
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({
+        error: error.message || String(error),
+      }),
+    };
   } finally {
-    await client.end();
+    try {
+      if (client) client.release();
+      await pool.end();
+    } catch (e) {
+      // ignore cleanup errors
+    }
   }
 };
+
