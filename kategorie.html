@@ -3980,11 +3980,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   async function saveToDB(itemId, status, remark){
-    await fetch(API, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ itemId, status, remark })
-    });
+  const res = await fetch(API, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ itemId, status, remark })
+  });
+
+  const txt = await res.text();
+  if (!res.ok) {
+    console.error("Save failed:", res.status, txt);
+    alert("Save failed: " + res.status + "\n" + txt);
+    return null;
+  }
+
+  console.log("Saved:", txt);
+  return JSON.parse(txt);
   }
 
   /* ---------- BUILD LIST ITEMS ---------- */

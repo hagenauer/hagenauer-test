@@ -2,7 +2,8 @@ const { Client } = require("pg");
 
 exports.handler = async (event, context) => {
   const client = new Client({
-    connectionString: process.env.DATABASE_URL, // From Netlify environment variable
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false },
   });
 
   const headers = {
