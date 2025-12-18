@@ -15,7 +15,10 @@ exports.handler = async (event) => {
   // Create pool per invocation (Netlify serverless friendly)
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false },
+    ssl: {
+      rejectUnauthorized: false,
+      require: true,
+    },
     // Optional: avoids long hangs
     connectionTimeoutMillis: 8000,
   });
@@ -99,7 +102,6 @@ exports.handler = async (event) => {
   } catch (error) {
     console.error("Error in Netlify function:", error);
 
-    // Return real error so you can see it in the browser/Network tab
     return {
       statusCode: 500,
       headers,
@@ -116,4 +118,5 @@ exports.handler = async (event) => {
     }
   }
 };
+
 
