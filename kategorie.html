@@ -5057,7 +5057,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   /* ---------- HELPERS ---------- */
   function applyStatusAppearance(li, status){
-    li.classList.remove('status-not-started','status-in-progress','status-completed');
+    li.classList.remove('status-not-started','status-in-progress','status-new-import','status-completed');
     if (status === 'not_started') li.classList.add('status-not-started');
     if (status === 'in_arbeit') li.classList.add('status-in-progress');
     if (status === 'neue_import') li.classList.add('status-new-import');
