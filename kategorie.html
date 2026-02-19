@@ -256,6 +256,7 @@
     /* color the status via a dot + select background */
     li.status-not-started .item-name::before,
     li.status-in-progress .item-name::before,
+    li.status-new-import .item-name::before,
     li.status-completed .item-name::before{
       content:"";
       display:inline-block;
@@ -266,16 +267,21 @@
     }
 
     li.status-not-started .item-name::before{ background:#22c55e; }   /* green */
-    li.status-in-progress .item-name::before{ background:#eab308; }   /* yellow */
-    li.status-completed     .item-name::before{ background:#ef4444; } /* red */
+    li.status-in-progress .item-name::before{ background:#a09b9b; }   /* yellow */
+    li.status-new-import .item-name::before{ background:#f59e0b; }   /* orange */
+    li.status-completed  .item-name::before{ background:#ef4444; } /* red */
 
     li.status-not-started .status-select{
       background:#ecfdf3;
       border-color:#bbf7d0;
     }
     li.status-in-progress .status-select{
-      background:#fef9c3;
-      border-color:#facc15;
+      background:#cececc;
+      border-color:#a09b9b;
+    }
+    li.status-new-import .status-select{
+      background:#ffedd5;
+      border-color:#fbbf24;
     }
     li.status-completed .status-select{
       background:#fee2e2;
@@ -5054,6 +5060,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     li.classList.remove('status-not-started','status-in-progress','status-completed');
     if (status === 'not_started') li.classList.add('status-not-started');
     if (status === 'in_arbeit') li.classList.add('status-in-progress');
+    if (status === 'neue_import') li.classList.add('status-new-import');
     if (status === 'abgeschlossen') li.classList.add('status-completed');
   }
 
@@ -5098,6 +5105,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <select class="status-select">
             <option value="not_started">noch nicht angefangen</option>
             <option value="in_arbeit">noch in Arbeit</option>
+            <option value="neue_import">neue Artikel importiert</option>
             <option value="abgeschlossen">abgeschlossen</option>
           </select>
         </label>
