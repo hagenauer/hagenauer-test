@@ -4916,61 +4916,170 @@
    </p>
   </div>
 <script>
-(function () {
-  const sections = Array.from(document.querySelectorAll('.section'));
+   (function () {
+      // Turn every existing ".section" into an accessible accordion.
+      // If a section already contains an <h2> and <ul>, we will create the header button and content wrapper for you.
+      const sections = Array.from(document.querySelectorAll('.section'));
 
-  for (const sec of sections) {
-    if (sec.querySelector('.section-header')) continue;
+      for (const sec of sections) {
+        // Skip if already processed (has .section-header)
+        if (sec.querySelector('.section-header')) continue;
 
-    const titleEl = sec.querySelector('h2');
-    const listEl  = sec.querySelector('ul');
-    if (!titleEl) continue;
+        const titleEl = sec.querySelector('h2');
+        const listEl  = sec.querySelector('ul');
 
-    const headerBtn = document.createElement('button');
-    headerBtn.className = 'section-header';
-    headerBtn.type = 'button';
+        if (!titleEl) continue;
 
-    const chev = document.createElement('span');
-    chev.className = 'chev';
+        // Build header button
+        const headerBtn = document.createElement('button');
+        headerBtn.className = 'section-header';
+        headerBtn.type = 'button';
 
-    const titleSpan = document.createElement('span');
-    titleSpan.className = 'section-title';
-    titleSpan.textContent = titleEl.textContent.trim();
+        const chev = document.createElement('span');
+        chev.className = 'chev'; chev.setAttribute('aria-hidden','true');
 
-    const count = document.createElement('span');
-    count.className = 'count';
+        const titleSpan = document.createElement('span');
+        titleSpan.className = 'section-title';
+        titleSpan.textContent = titleEl.textContent.trim();
 
-    headerBtn.append(chev, titleSpan, count);
+        const count = document.createElement('span');
+        count.className = 'count';
+        count.setAttribute('data-count','');
+        count.textContent = '–';
 
-    const content = document.createElement('div');
-    content.className = 'section-content';
-    if (listEl) content.appendChild(listEl);
+        headerBtn.append(chev, titleSpan, count);
 
-    sec.innerHTML = '';
-    sec.setAttribute('aria-expanded', 'false');
-    sec.append(headerBtn, content);
-  }
+        // Content wrapper
+        const content = document.createElement('div');
+        const panelId = (sec.id ? sec.id : titleSpan.textContent.toLowerCase().replace(/\s+/g,'-')) + '-panel';
+        content.className = 'section-content';
+        content.id = panelId;
+        content.setAttribute('role','region');
 
-  function updateCounts(){
-    document.querySelectorAll('.section').forEach(sec => {
-      const count = sec.querySelector('.count');
-      const items = sec.querySelectorAll('li').length;
-      count.textContent = items;
-    });
-  }
-  updateCounts();
+        // Move list into content
+        if (listEl) content.appendChild(listEl);
 
-  document.addEventListener('click', e => {
-    const btn = e.target.closest('.section-header');
-    if (!btn) return;
-    const sec = btn.closest('.section');
-    sec.setAttribute(
-      'aria-expanded',
-      sec.getAttribute('aria-expanded') === 'true' ? 'false' : 'true'
-    );
-  });
+        // Insert into section
+        sec.innerHTML = ''; // clear original
+        sec.setAttribute('aria-expanded', 'false');
+        sec.append(headerBtn, content);
 
-})();
+        // Link ARIA
+        if (sec.id) headerBtn.setAttribute('aria-controls', panelId);
+      }
+
+      // Count items per section
+      function updateCounts(){
+        for (const sec of document.querySelectorAll('.section')) {
+          const ul = sec.querySelector('ul');
+          const count = sec.querySelector('[data-count]');
+          if (!count) continue;
+          const n = ul ? ul.querySelectorAll('li').length : 0;
+          count.textContent = n.toString();
+        }
+      }
+      updateCounts();
+
+      // Toggle behavior
+      function toggleSection(sec, expand){
+        const isOpen = sec.getAttribute('aria-expanded') === 'true';
+        const next = (typeof expand === 'boolean') ? expand : !isOpen;
+        sec.setAttribute('aria-expanded', next ? 'true' : 'false');
+      }
+
+      // Click handlers
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.section-header');
+        if (!btn) return;
+        const sec = btn.closest('.section');
+        toggleSection(sec);
+      });
+
+      // Keyboard: toggle with Enter/Space (native button already handles), Arrow Up/Down to move focus
+      document.addEventListener('keydown', (e) => {
+        const btn = e.target.closest('.section-header');
+        if (!btn) return;
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          const headers = Array.from(document.querySelectorAll('.section-header'));
+          const i = headers.indexOf(btn);
+          const j = e.key === 'ArrowDown' ? Math.min(i+1, headers.length-1) : Math.max(i-1,0);
+          headers[j].focus();
+        }
+      });
+
+      // Hash deep-link: if URL has #id, open that section
+      if (location.hash) {
+        const target = document.querySelector(location.hash);
+        if (target && target.classList.contains('section')) {
+          toggleSection(target, true);
+          const header = target.querySelector('.section-header');
+          if (header) header.scrollIntoView({behavior:'smooth', block:'start'});
+        }
+      }
+
+      // Expand/Collapse All
+      const expandAllBtn = document.getElementById('expandAll');
+      const collapseAllBtn = document.getElementById('collapseAll');
+      expandAllBtn?.addEventListener('click', () => {
+        document.querySelectorAll('.section').forEach(sec => toggleSection(sec, true));
+      });
+      collapseAllBtn?.addEventListener('click', () => {
+        document.querySelectorAll('.section').forEach(sec => toggleSection(sec, false));
+      });
+
+      // Filter (search across titles and list items)
+      const input = document.getElementById('search');
+      const clearBtn = document.getElementById('clearFilter');
+      const noResults = document.getElementById('noResults');
+
+      function applyFilter(q){
+        q = (q || '').trim().toLowerCase();
+        let visibleCount = 0;
+
+        document.querySelectorAll('.section').forEach(sec => {
+          const title = (sec.querySelector('.section-title')?.textContent || '').toLowerCase();
+
+          // Match in title OR any li text
+          const items = Array.from(sec.querySelectorAll('li'));
+          const matchesItem = items.some(li => li.textContent.toLowerCase().includes(q));
+          const matchesTitle = title.includes(q);
+
+          // Show/hide items inside matched sections
+          let sectionHasMatch = false;
+          if (q) {
+            items.forEach(li => {
+              const hit = li.textContent.toLowerCase().includes(q);
+              li.style.display = hit ? '' : 'none';
+              if (hit) sectionHasMatch = true;
+            });
+          } else {
+            items.forEach(li => li.style.display = '');
+          }
+
+          const showSection = !q || matchesTitle || sectionHasMatch;
+          sec.hidden = !showSection;
+          if (showSection) visibleCount++;
+
+          // If filtering, auto-expand matched sections
+          if (q && showSection) {
+            sec.setAttribute('aria-expanded','true');
+          }
+        });
+
+        noResults.hidden = visibleCount > 0;
+        updateCounts();
+      }
+
+      input?.addEventListener('input', (e) => applyFilter(e.target.value));
+      clearBtn?.addEventListener('click', () => {
+        input.value = '';
+        applyFilter('');
+      });
+
+      // Initial: all sections visible, lists collapsed
+      document.querySelectorAll('.section').forEach(sec => sec.setAttribute('aria-expanded','false'));
+    })();
 </script>
 
 
