@@ -6249,7 +6249,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const nameSpan = li.querySelector('.item-name');
       if (!nameSpan) return;
 
-      const itemId = nameSpan.textContent.trim();
+      const itemId = nameSpan.childNodes[0].textContent.trim();
 
       const index = document.createElement('span');
       index.className = 'item-index';
