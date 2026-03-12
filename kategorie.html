@@ -104,7 +104,7 @@
       margin:0; padding:32px 16px 60px;
       color:var(--text);
     }
-    .container{max-width:1100px;margin:0 auto}
+    .container{max-width:1400px;margin:0 auto}
 
     h1{
       text-align:center;
@@ -177,42 +177,96 @@
     }
     .section[aria-expanded="true"] .section-content{opacity:1; max-height:none; padding-bottom:16px}
 
-    ul{list-style:none; padding-left:0; margin:10px 0 0}
-    li{
-      padding:10px 0;
-      border-top:1px dashed #e5e7eb;
-      display:flex;
-      gap:12px;
-      align-items:center;
-      flex-wrap:nowrap;          /* everything in one row on desktop */
+    ul{
+      list-style:none;
+      padding-left:0;
+      margin:10px 0 0;
     }
-    li:first-child{border-top:none}
 
-/* index number */
+    li{
+      padding:14px 0;
+      border-top:1px dashed #e5e7eb;
+      display:grid;
+      grid-template-columns: 40px minmax(420px, 1.8fr) auto auto;
+      gap:14px;
+      align-items:start;
+    }
+
+    li:first-child{
+      border-top:none;
+    }
+
     .item-index{
-      width:26px;
+      width:auto;
       text-align:right;
       font-size:13px;
       color:#6b7280;
-      flex:0 0 auto;
+      padding-top:4px;
     }
 
     .item-name{
-      flex:2;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
+      min-width:0;
+      white-space:normal;
+      overflow:visible;
+      text-overflow:unset;
+      line-height:1.45;
+      font-size:15px;
     }
 
     .item-artcount{
-      margin-left: 6px;
-      font-size: 12px;
-      font-weight: 500;
-      color: #9ca3af;              /* soft grey */
-      background: rgba(0,0,0,0.04); /* transparent look */
-      padding: 2px 6px;
-      border-radius: 999px;
-      letter-spacing: 0.3px;
+      display:inline-block;
+      margin-left:8px;
+      font-size:12px;
+      font-weight:600;
+      color:#6b7280;
+      background:#f3f4f6;
+      padding:2px 8px;
+      border-radius:999px;
+      vertical-align:middle;
+    }
+
+    .item-eigenempty{
+      display:block !important;
+      margin-top:8px !important;
+      padding:10px 12px;
+      background:#f8fafc;
+      border:1px solid #e5e7eb;
+      border-radius:10px;
+      font-size:13px !important;
+      color:#4b5563 !important;
+      line-height:1.5;
+      white-space:normal;
+      word-break:break-word;
+    }
+
+    a{
+      color:var(--brand);
+      text-decoration:none;
+      font-weight:600;
+      border:1px solid rgba(37,99,235,.18);
+      padding:8px 12px;
+      border-radius:10px;
+      transition:background var(--speed), border-color var(--speed);
+      white-space:nowrap;
+      align-self:start;
+    }
+
+    a:hover{
+
+  background:rgba(37,99,235,.06);
+  border-color:rgba(37,99,235,.28);
+    }
+
+
+    .item-controls{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      font-size:13px;
+      color:#4b5563;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      align-self:start;
     }
 
 
@@ -346,6 +400,9 @@
      Filter l&ouml;schen
     </button>
    </div>
+
+
+   
 <!-- END: Your existing sections -->
    <div class="section" id="Abstreifer">
     <h2>
