@@ -6465,5 +6465,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 </script>
 
+
+<script>
+document.querySelectorAll('.item-eigenempty').forEach(el => {
+  const text = el.innerHTML;
+  el.innerHTML = text.replace(
+    "Eigenschaft gepflegt werden:",
+    "<strong>Eigenschaft gepflegt werden:</strong>"
+  );
+});
+</script>
+
 </body>
 </html>
+
