@@ -3,7 +3,6 @@
  <head>
   <meta charset="utf-8"/>
   <link href="logo.png" rel="icon" sizes="32x32" type="image/png"/>
-  
   <title>
    Main Kategorie Gruppen
   </title>
@@ -6179,20 +6178,10 @@
 
 
 
- <script>
+<script>
 const API = "/.netlify/functions/status";
 
-document.addEventListener('DOMContentLoaded', async () => {
-
-  /* ---------- LOAD STATES FROM DATABASE ---------- */
-  let states = {};
-  try {
-    const res = await fetch(API);
-    states = await res.json();
-  } catch (e) {
-    console.error("Failed to load states", e);
-  }
-
+document.addEventListener('DOMContentLoaded', () => {
   /* ---------- CODE MODAL ---------- */
   const codeModal    = document.getElementById('codeModal');
   const codeInput    = document.getElementById('codeInputModal');
@@ -6268,99 +6257,160 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   async function saveToDB(itemId, status, remark){
-  const res = await fetch(API, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ itemId, status, remark })
-  });
+    const res = await fetch(API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ itemId, status, remark })
+    });
 
-  const txt = await res.text();
-  if (!res.ok) {
-    console.error("Save failed:", res.status, txt);
-    alert("Save failed: " + res.status + "\n" + txt);
-    return null;
+    const txt = await res.text();
+    if (!res.ok) {
+      console.error("Save failed:", res.status, txt);
+      alert("Save failed: " + res.status + "\n" + txt);
+      return null;
+    }
+
+    console.log("Saved:", txt);
+    return JSON.parse(txt);
   }
 
-  console.log("Saved:", txt);
-  return JSON.parse(txt);
-  }
+  /* ---------- BUILD CONTROLS IMMEDIATELY ---------- */
+  function buildListControls() {
+    document.querySelectorAll('.section ul').forEach(ul => {
+      let counter = 1;
 
-  /* ---------- BUILD LIST ITEMS ---------- */
-  document.querySelectorAll('.section ul').forEach(ul => {
-    let counter = 1;
+      ul.querySelectorAll('li').forEach(li => {
+        const nameSpan = li.querySelector('.item-name');
+        if (!nameSpan) return;
 
-    ul.querySelectorAll('li').forEach(li => {
-      const nameSpan = li.querySelector('.item-name');
-      if (!nameSpan) return;
+        // prevent duplicate controls if function runs again
+        if (li.dataset.built === 'true') return;
+        li.dataset.built = 'true';
 
-      const itemId = nameSpan.childNodes[0].textContent.trim();
+        const itemId = nameSpan.childNodes[0].textContent.trim();
 
-      const index = document.createElement('span');
-      index.className = 'item-index';
-      index.textContent = counter++ + '.';
-      li.insertBefore(index, nameSpan);
+        // store item id for later update
+        li.dataset.itemId = itemId;
 
-      const controls = document.createElement('div');
-      controls.className = 'item-controls';
-      controls.innerHTML = `
-        <button type="button" class="note-btn">Bemerkung</button>
-        <label>Status:
-          <select class="status-select">
-            <option value="not_started">noch nicht angefangen</option>
-            <option value="in_arbeit">noch in Arbeit</option>
-            <option value="neue_import">neue Artikel importiert</option>
-            <option value="abgeschlossen">abgeschlossen</option>
-          </select>
-        </label>
-      `;
-      li.appendChild(controls);
+        const index = document.createElement('span');
+        index.className = 'item-index';
+        index.textContent = counter++ + '.';
+        li.insertBefore(index, nameSpan);
 
-      const noteBtn = controls.querySelector('.note-btn');
-      const select  = controls.querySelector('.status-select');
+        const controls = document.createElement('div');
+        controls.className = 'item-controls';
+        controls.innerHTML = `
+          <button type="button" class="note-btn">Bemerkung</button>
+          <label>Status:
+            <select class="status-select">
+              <option value="not_started">noch nicht angefangen</option>
+              <option value="in_arbeit">noch in Arbeit</option>
+              <option value="neue_import">neue Artikel importiert</option>
+              <option value="abgeschlossen">abgeschlossen</option>
+            </select>
+          </label>
+        `;
+        li.appendChild(controls);
 
-      const saved = states[itemId] || {};
-      let remark = saved.remark || '';
-      let status = saved.status || 'not_started';
+        const noteBtn = controls.querySelector('.note-btn');
+        const select  = controls.querySelector('.status-select');
 
-      select.value = status;
-      applyStatusAppearance(li, status);
+        // default values first
+        li.dataset.remark = '';
+        li.dataset.status = 'not_started';
 
-      noteBtn.classList.toggle('has-note', !!remark);
-      noteBtn.title = remark || 'Keine Bemerkung';
+        select.value = 'not_started';
+        applyStatusAppearance(li, 'not_started');
+        noteBtn.classList.remove('has-note');
+        noteBtn.title = 'Keine Bemerkung';
 
-      noteBtn.onclick = () => {
-        openRemarkModal(remark, async text => {
-          remark = text || '';
-          noteBtn.classList.toggle('has-note', !!remark);
-          noteBtn.title = remark || 'Keine Bemerkung';
-          await saveToDB(itemId, status, remark);
-        });
-      };
+        noteBtn.onclick = () => {
+          let remark = li.dataset.remark || '';
+          let status = li.dataset.status || 'not_started';
 
-      select.onchange = () => {
-        const next = select.value;
+          openRemarkModal(remark, async text => {
+            remark = text || '';
+            li.dataset.remark = remark;
 
-         // Only require code when setting "abgeschlossen"
-         if (next !== "abgeschlossen") {
-           status = next;
-           applyStatusAppearance(li, status);
-           saveToDB(itemId, status, remark);
-           return;
+            noteBtn.classList.toggle('has-note', !!remark);
+            noteBtn.title = remark || 'Keine Bemerkung';
+
+            await saveToDB(itemId, status, remark);
+          });
+        };
+
+        select.onchange = () => {
+          const currentStatus = li.dataset.status || 'not_started';
+          const remark = li.dataset.remark || '';
+          const next = select.value;
+
+          if (next !== "abgeschlossen") {
+            li.dataset.status = next;
+            applyStatusAppearance(li, next);
+            saveToDB(itemId, next, remark);
+            return;
           }
 
           openCodeModal(
             async () => {
-              status = next;
-              applyStatusAppearance(li, status);
-              await saveToDB(itemId, status, remark);
-          },
-          () => select.value = status
-        ); 
-       };     
+              li.dataset.status = next;
+              applyStatusAppearance(li, next);
+              await saveToDB(itemId, next, remark);
+            },
+            () => {
+              select.value = currentStatus;
+            }
+          );
+        };
+      });
     });
-  });
-}); 
+  }
 
+  /* ---------- APPLY SAVED STATES AFTER FETCH ---------- */
+  function applySavedStates(states) {
+    document.querySelectorAll('.section ul li').forEach(li => {
+      const itemId = li.dataset.itemId;
+      if (!itemId) return;
+
+      const saved = states[itemId] || {};
+      const remark = saved.remark || '';
+      const status = saved.status || 'not_started';
+
+      li.dataset.remark = remark;
+      li.dataset.status = status;
+
+      const noteBtn = li.querySelector('.note-btn');
+      const select = li.querySelector('.status-select');
+
+      if (noteBtn) {
+        noteBtn.classList.toggle('has-note', !!remark);
+        noteBtn.title = remark || 'Keine Bemerkung';
+      }
+
+      if (select) {
+        select.value = status;
+      }
+
+      applyStatusAppearance(li, status);
+    });
+  }
+
+  /* ---------- STEP 1: build UI immediately ---------- */
+  buildListControls();
+
+  /* ---------- STEP 2: fetch saved data in background ---------- */
+  loadStatesFromDB();
+
+  async function loadStatesFromDB() {
+    try {
+      const res = await fetch(API);
+      const states = await res.json();
+      applySavedStates(states);
+    } catch (e) {
+      console.error("Failed to load states", e);
+    }
+  }
+});
 </script>
 
 
