@@ -1,5 +1,7 @@
 [build]
-  publish = "."              # The folder that has your index.html
+  publish = "."
+  command = "npm install"
 
 [functions]
   directory = "netlify/functions"
+  node_bundler = "esbuild"
