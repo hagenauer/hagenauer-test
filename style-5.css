@@ -66,10 +66,19 @@ body {
 
 /* Header */
 .site-header {
-  position: sticky; top: 0; z-index: 1000;
-  background: color-mix(in oklab, var(--bg) 88%, transparent);
-  backdrop-filter: blur(8px);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  background: rgba(247, 247, 251, 0.55); /* soft glass effect */
+  backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--line);
+}
+/* Ensure search-wrapper and hero text sit above hero-zone overlay */
+.search-wrapper,
+.hero-inner {
+  position: relative;
+  z-index: 2;
 }
 .header-inner {
   display: flex; align-items: center; justify-content: space-between;
@@ -114,21 +123,27 @@ body {
 }
 .btn-ghost:hover { background: color-mix(in oklab, var(--brand) 12%, transparent); }
 
-/* Hero */
-.hero {
-  position: relative; overflow: hidden;
+/* Hero zone: shared background for header + search bar + hero text */
+.hero-zone {
+  position: relative;
+  overflow: hidden;
   border-bottom: 1px solid var(--line);
   background:
-    /* here the percentage is responssible for the background transparancy rate (45% and 85% is the optimum*/
     linear-gradient(180deg, color-mix(in oklab, var(--bg) 30%, transparent), color-mix(in oklab, var(--bg) 50%, transparent)),
     var(--hero-image) no-repeat center/cover fixed;
 }
-.hero::after {
-  content:"";
+.hero-zone::after {
+  content: "";
   position: absolute; inset: 0;
-  background: radial-gradient(1000px 400px at 20% -20%, color-mix(in oklab, var(--brand) 12%, transparent), transparent 40%),
-              radial-gradient(800px 300px at 120% 20%, color-mix(in oklab, var(--brand-2) 12%, transparent), transparent 45%);
+  background:
+    radial-gradient(1000px 400px at 20% -20%, color-mix(in oklab, var(--brand) 12%, transparent), transparent 40%),
+    radial-gradient(800px 300px at 120% 20%, color-mix(in oklab, var(--brand-2) 12%, transparent), transparent 45%);
   pointer-events: none;
+}
+
+/* Hero */
+.hero {
+  position: relative;
 }
 .hero-inner { padding: clamp(48px, 8vw, 96px) 0; text-align: center; position: relative; z-index: 1; }
 .hero-title {
@@ -188,3 +203,366 @@ body {
 
 /* Utility (optional) */
 .hidden { display: none !important; }
+
+
+/* =========================
+   PROFESSIONAL SEARCH BAR
+   ========================= */
+
+.search-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 40px 0;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  width: min(650px, 90vw);
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 10px 14px;
+  box-shadow: var(--shadow);
+  transition: all 0.25s ease;
+  backdrop-filter: blur(10px);
+}
+
+/* hover effect */
+.search-box:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in oklab, var(--brand) 30%, var(--line));
+}
+
+/* focus effect */
+.search-box:focus-within {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--brand) 20%, transparent);
+}
+
+/* input field */
+.search-box input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 15px;
+  padding: 10px 12px;
+}
+
+/* placeholder styling */
+.search-box input::placeholder {
+  color: var(--muted);
+}
+
+/* icon button */
+.search-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  color: white;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 18px rgba(37,99,235,.35);
+}
+
+.search-btn:active {
+  transform: scale(0.95);
+}
+
+.recommendation-list {
+  max-width: 900px;
+  margin: 20px auto;
+  display: grid;
+  gap: 12px;
+}
+
+.recommendation-card {
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 16px;
+  background: var(--bg-soft);
+  color: var(--text);
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  width: 100%;
+}
+
+.recommendation-card:hover {
+  transform: translateY(-1px);
+}
+
+.artikel-detail-box {
+  max-width: 1000px;
+  margin: 30px auto;
+  background: var(--bg-soft);
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+.artikel-detail-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.artikel-detail-table th,
+.artikel-detail-table td {
+  border-bottom: 1px solid var(--line);
+  padding: 10px;
+  vertical-align: top;
+}
+
+.artikel-detail-table th {
+  width: 280px;
+  text-align: left;
+  color: var(--muted);
+}
+
+
+/* =========================================================
+   Professional Artikel Search Result Design
+   ========================================================= */
+
+#results,
+#artikelDetails {
+  width: min(1100px, calc(100% - 32px));
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.search-status,
+.search-error {
+  width: min(900px, calc(100% - 32px));
+  margin: 18px auto;
+  padding: 14px 18px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.88);
+  color: #111827;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+  backdrop-filter: blur(10px);
+  font-weight: 600;
+}
+
+.search-error {
+  border-left: 5px solid #dc2626;
+  color: #991b1b;
+}
+
+/* Search recommendation box */
+.search-results-panel {
+  margin-top: 22px;
+  padding: 18px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 18px 50px rgba(15, 23, 42, 0.20);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+}
+
+.search-results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+.search-results-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #0f172a;
+}
+
+.search-results-count {
+  font-size: 13px;
+  font-weight: 700;
+  color: #2563eb;
+  background: #eff6ff;
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+
+/* Recommendation list */
+.recommendation-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+/* Recommendation card */
+.recommendation-card {
+  width: 100%;
+  text-align: left;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 16px;
+  padding: 14px 16px;
+  background: #ffffff;
+  color: #111827;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.recommendation-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 35px rgba(15, 23, 42, 0.16);
+  border-color: #2563eb;
+}
+
+.recommendation-card:focus {
+  outline: 3px solid rgba(37, 99, 235, 0.25);
+  outline-offset: 2px;
+}
+
+.recommendation-artnr {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 800;
+  color: #1d4ed8;
+  margin-bottom: 8px;
+}
+
+.recommendation-artnr::before {
+  content: "Artikel";
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 3px 7px;
+  border-radius: 999px;
+}
+
+.recommendation-desc {
+  display: block;
+  font-size: 14px;
+  line-height: 1.45;
+  color: #334155;
+  word-break: break-word;
+}
+
+/* Detail box */
+.artikel-detail-box {
+  margin-top: 28px;
+  margin-bottom: 40px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.93);
+  box-shadow: 0 22px 60px rgba(15, 23, 42, 0.22);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  overflow: hidden;
+}
+
+.artikel-detail-header {
+  padding: 22px 26px;
+  background: linear-gradient(135deg, #0f172a, #1e3a8a);
+  color: #ffffff;
+}
+
+.artikel-detail-header h2 {
+  margin: 0;
+  font-size: 24px;
+  letter-spacing: 0.2px;
+}
+
+.artikel-detail-header p {
+  margin: 6px 0 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 14px;
+}
+
+/* Detail table */
+.artikel-detail-table-wrap {
+  overflow-x: auto;
+}
+
+.artikel-detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+}
+
+.artikel-detail-table tr {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.artikel-detail-table tr:last-child {
+  border-bottom: none;
+}
+
+.artikel-detail-table th,
+.artikel-detail-table td {
+  padding: 13px 18px;
+  vertical-align: top;
+  font-size: 14px;
+}
+
+.artikel-detail-table th {
+  width: 32%;
+  min-width: 230px;
+  color: #475569;
+  font-weight: 800;
+  background: #f8fafc;
+}
+
+.artikel-detail-table td {
+  color: #0f172a;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.artikel-detail-table tr:hover td,
+.artikel-detail-table tr:hover th {
+  background: #f1f5f9;
+}
+
+/* Mobile improvement */
+@media (max-width: 700px) {
+  .search-results-panel {
+    padding: 14px;
+  }
+
+  .recommendation-list {
+    grid-template-columns: 1fr;
+  }
+
+  .artikel-detail-header {
+    padding: 18px;
+  }
+
+  .artikel-detail-header h2 {
+    font-size: 20px;
+  }
+
+  .artikel-detail-table th,
+  .artikel-detail-table td {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    padding: 10px 14px;
+  }
+
+  .artikel-detail-table th {
+    padding-bottom: 4px;
+  }
+
+  .artikel-detail-table td {
+    padding-top: 4px;
+  }
+}
