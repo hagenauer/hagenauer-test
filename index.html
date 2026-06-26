@@ -2,18 +2,19 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/png" sizes="32x32" href="logo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <title>Hagenauer Datenbank | Hagenauer GmbH & Co. KG</title>
 
   <!-- SEO & social -->
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Interne Artikel-Datenbank von Hagenauer GmbH & Co. KG: Kategorien, Main-Datenbank und Referenzen für SAP-Import." />
   <meta property="og:title" content="Hagenauer Artikel Datenbank" />
   <meta property="og:description" content="Zentrale Übersicht: Sub-/Main-Kategorien, Main-Datenbank & SAP-Referenzen." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="logo.png" />
 
-  <!-- Favicon (optional) -->
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="logo.png" />
   <link rel="icon" href="favicon.ico" />
 
   <!-- Fonts -->
@@ -26,40 +27,67 @@
 </head>
 
 <body class="theme-auto">
+
   <!-- Skip link for accessibility -->
   <a class="skip-link" href="#main">Zum Inhalt springen</a>
 
-  <!-- Topbar / Header -->
-  <header class="site-header" role="banner">
-    <div class="container header-inner">
-      <a class="brand" href="#" aria-label="Startseite">
-        <img src="logo.png" alt="Hagenauer Logo" class="brand-logo" />
-        <div class="brand-text">
-          <span class="brand-title">Hagenauer GmbH &amp; Co. KG</span>
-          <span class="brand-sub">Artikel&nbsp;Datenbank</span>
-        </div>
-      </a>
+  <!-- Hero zone -->
+  <div class="hero-zone">
 
-      <nav class="nav" aria-label="Hauptnavigation">
-        <a class="nav-link" href="home.html">Home</a>
-        <a class="nav-link" href="kategorie.html">Main Kategorien</a>
-        <a class="nav-link" href="main_datenbank.html">Main Datenbank</a>
-        <button id="themeToggle" class="btn btn-ghost" aria-label="Darstellung wechseln" title="Hell/Dunkel umschalten">🌓</button>
-      </nav>
-    </div>
-  </header>
+    <!-- Header -->
+    <header class="site-header" role="banner">
+      <div class="container header-inner">
+        <a class="brand" href="#" aria-label="Startseite">
+          <img src="logo.png" alt="Hagenauer Logo" class="brand-logo" />
+          <div class="brand-text">
+            <span class="brand-title">Hagenauer GmbH &amp; Co. KG</span>
+            <span class="brand-sub">Artikel&nbsp;Datenbank</span>
+          </div>
+        </a>
 
-  <!-- Hero -->
-  <section class="hero">
-    <div class="container hero-inner">
-      <h1 class="hero-title">Ihre zentrale Daten-Schaltstelle</h1>
-      <p class="hero-subtitle">
-        Schnellzugriff auf <strong>Sub/Main Kategorien</strong>, die <strong>Main Datenbank</strong> und
-        <strong>Referenzen für den SAP-Import</strong> – alles an einem Ort.
-      </p>
+        <nav class="nav" aria-label="Hauptnavigation">
+          <a class="nav-link" href="home.html">Home</a>
+          <a class="nav-link" href="main_kategorie_group_3.html">Main Kategorien</a>
+          <a class="nav-link" href="main_datenbank.html">Main Datenbank</a>
+          <button id="themeToggle" class="btn btn-ghost" type="button" aria-label="Darstellung wechseln" title="Hell/Dunkel umschalten">
+            🌓
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Search -->
+    <div class="search-wrapper">
+      <div class="search-box">
+        <input 
+          type="text" 
+          id="searchInput"
+          placeholder="Artikelnummer oder Artikelbeschreibung suchen..."
+          autocomplete="off"
+        />
+
+        <button id="searchButton" class="search-btn" type="button" aria-label="Suchen">
+          🔍
+        </button>
+      </div>
     </div>
-    <!-- Background image lives in CSS to keep HTML clean -->
-  </section>
+
+    <!-- Search results and details -->
+    <div id="results"></div>
+    <div id="artikelDetails"></div>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container hero-inner">
+        <h1 class="hero-title">Ihre zentrale Daten-Schaltstelle</h1>
+        <p class="hero-subtitle">
+          Schnellzugriff auf <strong>Sub/Main Kategorien</strong>, die <strong>Main Datenbank</strong> und
+          <strong>Referenzen für den SAP-Import</strong> – alles an einem Ort.
+        </p>
+      </div>
+    </section>
+
+  </div>
 
   <!-- Main -->
   <main id="main" class="container">
@@ -69,8 +97,8 @@
         <p class="section-sub">Übersicht der wichtigsten Bereiche</p>
       </div>
 
-      <!-- Card grid -->
       <ul class="card-grid" role="list">
+
         <li class="card">
           <div class="card-body">
             <div class="card-icon" aria-hidden="true">🗂️</div>
@@ -89,7 +117,7 @@
             <p class="card-text">Hauptgruppen für eine klare Navigation.</p>
           </div>
           <div class="card-actions">
-            <a class="btn btn-outline" href="kategorie.html">Daten ansehen ➜</a>
+            <a class="btn btn-outline" href="main_kategorie_group_3.html">Daten ansehen ➜</a>
           </div>
         </li>
 
@@ -130,13 +158,14 @@
           <div class="card-body">
             <div class="card-icon" aria-hidden="true">🗃️</div>
             <h3 class="card-title">Referenz Daten für Synonyme</h3>
-            <p class="card-text">Synonyme übersetzung &amp; Prüfliste für Importläufe.</p>
+            <p class="card-text">Synonyme Übersetzung &amp; Prüfliste für Importläufe.</p>
           </div>
           <div class="card-actions">
-            <a class="btn btn-outline" href="https://d205374.sharepoint.com/:x:/s/Artikelstammdaten/EXy7-EVJaMpIni6AjubJkS8BaW542CMSALL35AL3VDzMFw?e=B32eCO">Daten ansehen ➜</a>
+            <a class="btn btn-outline" href="https://d205374.sharepoint.com/:x:/s/Artikelstammdaten/EXy7-EVJaMpIni6AjubJkS8BaW542CMSALL35AL3VDzMFw?e=B32eCO">
+              Daten ansehen ➜
+            </a>
           </div>
         </li>
-
 
         <li class="card">
           <div class="card-body">
@@ -144,20 +173,20 @@
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="48" height="48">
                 <circle cx="50" cy="50" r="48" fill="#009639" />
                 <g transform="scale(-1,1) translate(-100,0)">
-                <path d="M61 36c0-6.4-5.1-10.8-13.2-10.8-7.8 0-13.3 4-14.7 10.5l8 1.4c.6-2.9 3.1-4.7 6.7-4.7 3.5 0 5.7 1.7 5.7 4.4 0 2.1-1.1 3.3-3.9 4l-6.4 1.5c-6.2 1.5-9.5 4.8-9.5 9.7 0 6.2 5.2 10.5 12.8 10.5 7.2 0 12.1-3.4 13.7-9.4l-7.9-1.8c-.8 2.7-3 4.2-6.2 4.2-3.3 0-5.4-1.6-5.4-4.1 0-1.9 1.1-3.1 3.7-3.8l5.9-1.5c6.4-1.6 9.8-4.8 9.8-9.9z"
-                      fill="#ffffff"/>
+                  <path 
+                    d="M61 36c0-6.4-5.1-10.8-13.2-10.8-7.8 0-13.3 4-14.7 10.5l8 1.4c.6-2.9 3.1-4.7 6.7-4.7 3.5 0 5.7 1.7 5.7 4.4 0 2.1-1.1 3.3-3.9 4l-6.4 1.5c-6.2 1.5-9.5 4.8-9.5 9.7 0 6.2 5.2 10.5 12.8 10.5 7.2 0 12.1-3.4 13.7-9.4l-7.9-1.8c-.8 2.7-3 4.2-6.2 4.2-3.3 0-5.4-1.6-5.4-4.1 0-1.9 1.1-3.1 3.7-3.8l5.9-1.5c6.4-1.6 9.8-4.8 9.8-9.9z"
+                    fill="#ffffff"
+                  />
+                </g>
               </svg>
             </div>
             <h3 class="card-title">Schaeffler Daten</h3>
-            <p class="card-text">Schaeffler alle kategorie Daten.</p>
+            <p class="card-text">Schaeffler alle Kategorie Daten.</p>
           </div>
           <div class="card-actions">
             <a class="btn btn-outline" href="input_daten_schaeffler.html">Daten ansehen ➜</a>
           </div>
         </li>
-
-
-
 
       </ul>
     </section>
@@ -176,24 +205,245 @@
     </div>
   </footer>
 
-  <!-- Small helpers -->
+  <!-- JavaScript -->
   <script>
+    // =====================================================
     // Year
-    document.getElementById('year').textContent = new Date().getFullYear();
+    // =====================================================
+    document.getElementById("year").textContent = new Date().getFullYear();
 
-    // Theme: auto / light / dark (toggle cycles)
+    // =====================================================
+    // Theme: auto / dark / light
+    // =====================================================
     (function () {
       const root = document.documentElement;
-      const stored = localStorage.getItem('hagenauer-theme');
-      if (stored) root.dataset.theme = stored;
+      const stored = localStorage.getItem("hagenauer-theme");
 
-      document.getElementById('themeToggle').addEventListener('click', () => {
-        const current = root.dataset.theme || 'auto';
-        const next = current === 'auto' ? 'dark' : current === 'dark' ? 'light' : 'auto';
-        root.dataset.theme = next;
-        localStorage.setItem('hagenauer-theme', next);
-      });
+      if (stored) {
+        root.dataset.theme = stored;
+      }
+
+      const themeButton = document.getElementById("themeToggle");
+
+      if (themeButton) {
+        themeButton.addEventListener("click", function () {
+          const current = root.dataset.theme || "auto";
+          const next = current === "auto" ? "dark" : current === "dark" ? "light" : "auto";
+
+          root.dataset.theme = next;
+          localStorage.setItem("hagenauer-theme", next);
+        });
+      }
     })();
+
+    // =====================================================
+    // Supabase search via Netlify Functions
+    // =====================================================
+    const searchInput = document.getElementById("searchInput");
+    const searchButton = document.getElementById("searchButton");
+    const resultsContainer = document.getElementById("results");
+    const detailsContainer = document.getElementById("artikelDetails");
+
+    let searchTimer = null;
+
+    // Search while typing, with small delay
+    searchInput.addEventListener("input", function () {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(searchArtikel, 300);
+    });
+
+    // Search when clicking button
+    searchButton.addEventListener("click", function () {
+      searchArtikel();
+    });
+
+    // Search when pressing Enter
+    searchInput.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        searchArtikel();
+      }
+    });
+
+    async function searchArtikel() {
+      const query = searchInput.value.trim();
+
+      if (!query) {
+        resultsContainer.innerHTML = "";
+        detailsContainer.innerHTML = "";
+        return;
+      }
+
+      resultsContainer.innerHTML = '<p class="search-status">Suche läuft...</p>';
+      detailsContainer.innerHTML = "";
+
+      try {
+        const response = await fetch(
+          `/.netlify/functions/search?q=${encodeURIComponent(query)}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          resultsContainer.innerHTML = `
+            <p class="search-error">
+              Fehler: ${escapeHtml(data.error || "Suche fehlgeschlagen")}
+            </p>
+          `;
+          return;
+        }
+
+        renderRecommendations(data.results || []);
+
+      } catch (error) {
+        console.error("Search error:", error);
+        resultsContainer.innerHTML = `
+          <p class="search-error">
+            Serverfehler bei der Suche.
+          </p>
+        `;
+      }
+    }
+
+    function renderRecommendations(items) {
+      if (!items || items.length === 0) {
+        resultsContainer.innerHTML = `
+          <p class="search-status">
+            Kein passender Artikel gefunden.
+          </p>
+        `;
+        return;
+      }
+
+      resultsContainer.innerHTML = `
+        <section class="search-results-panel">
+          <div class="search-results-header">
+            <h3>Suchergebnisse</h3>
+            <span class="search-results-count">${items.length} Treffer</span>
+          </div>
+
+          <div class="recommendation-list">
+            ${items.map(function (item) {
+              const artikelnummer = item.artikelnummer || "";
+              const artikelbeschreibung = item.artikelbeschreibung || "";
+
+              return `
+                <button 
+                  class="recommendation-card" 
+                  type="button"
+                  data-artikelnummer="${escapeHtml(artikelnummer)}"
+                >
+                  <span class="recommendation-artnr">${escapeHtml(artikelnummer)}</span>
+                  <span class="recommendation-desc">${escapeHtml(artikelbeschreibung)}</span>
+                </button>
+              `;
+            }).join("")}
+          </div>
+        </section>
+     `;
+
+      const cards = document.querySelectorAll(".recommendation-card");
+
+      cards.forEach(function (card) {
+        card.addEventListener("click", function () {
+          const artikelnummer = card.dataset.artikelnummer;
+          loadArtikelDetails(artikelnummer);
+        });
+      });
+    }
+
+    async function loadArtikelDetails(artikelnummer) {
+      if (!artikelnummer) {
+        return;
+      }
+
+      detailsContainer.innerHTML = `
+        <p class="search-status">
+          Details werden geladen...
+        </p>
+      `;
+
+      try {
+        const response = await fetch(
+          `/.netlify/functions/details?artikelnummer=${encodeURIComponent(artikelnummer)}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          detailsContainer.innerHTML = `
+            <p class="search-error">
+              Fehler: ${escapeHtml(data.error || "Details konnten nicht geladen werden")}
+            </p>
+          `;
+          return;
+        }
+
+        renderArtikelDetails(data.artikel || {});
+
+      } catch (error) {
+        console.error("Details error:", error);
+        detailsContainer.innerHTML = `
+          <p class="search-error">
+            Serverfehler beim Laden der Artikeldetails.
+          </p>
+        `;
+      }
+    }
+
+    function renderArtikelDetails(row) {
+      const entries = Object.entries(row).filter(function ([key, value]) {
+        if (key === "created_at") return false;
+        if (value === null || value === undefined) return false;
+        if (String(value).trim() === "") return false;
+        return true;
+      });
+
+      if (entries.length === 0) {
+        detailsContainer.innerHTML = `
+          <p class="search-status">
+            Keine Artikeldetails gefunden.
+          </p>
+        `;
+        return;
+      }
+
+      const artikelnummer = row["Artikelnr."] || row["artikelnummer"] || "";
+
+      detailsContainer.innerHTML = `
+        <section class="artikel-detail-box">
+          <div class="artikel-detail-header">
+            <h2>Artikeldetails: ${escapeHtml(artikelnummer)}</h2>
+            <p>Es werden nur Spalten mit vorhandenen Werten angezeigt.</p>
+          </div>
+
+          <div class="artikel-detail-table-wrap">
+            <table class="artikel-detail-table">
+              <tbody>
+                ${entries.map(function ([key, value]) {
+                  return `
+                    <tr>
+                      <th>${escapeHtml(key)}</th>
+                      <td>${escapeHtml(value)}</td>
+                    </tr>
+                  `;
+                }).join("")}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      `;
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
   </script>
+
 </body>
 </html>
