@@ -24,6 +24,7 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="style-5.css" />
+
 </head>
 
 <body class="theme-auto">
@@ -97,7 +98,27 @@
         <p class="section-sub">Übersicht der wichtigsten Bereiche</p>
       </div>
 
-      <ul class="card-grid" role="list">
+      <div class="overview-content">
+        <aside class="work-status-panel" aria-labelledby="work-status-title">
+          <div class="work-status-panel__header">
+            <div class="work-status-panel__title-row">
+              <h3 class="work-status-panel__title" id="work-status-title">
+                <span class="work-status-panel__indicator" aria-hidden="true"></span>
+                Noch in Arbeit
+              </h3>
+              <span class="work-status-panel__count" id="workStatusCount" aria-label="Anzahl Kategorien">0</span>
+            </div>
+            <p class="work-status-panel__subtitle">
+              Zuletzt aktualisierte Kategorien zuerst. Anklicken, um die CSV-Datei zu öffnen.
+            </p>
+          </div>
+
+          <div id="workStatusContent" aria-live="polite">
+            <p class="work-status-message">Kategorien werden geladen …</p>
+          </div>
+        </aside>
+
+        <ul class="card-grid" role="list">
 
         <li class="card">
           <div class="card-body">
@@ -188,7 +209,8 @@
           </div>
         </li>
 
-      </ul>
+        </ul>
+      </div>
     </section>
   </main>
 
@@ -235,6 +257,210 @@
         });
       }
     })();
+
+
+
+    // =====================================================
+    // "Noch in Arbeit" list from Supabase status data
+    // =====================================================
+    const WORK_STATUS_API = "/.netlify/functions/status";
+    const WORK_STATUS_VALUE = "in_arbeit";
+
+    const workStatusContent = document.getElementById("workStatusContent");
+    const workStatusCount = document.getElementById("workStatusCount");
+
+    loadWorkStatusPanel();
+
+    async function loadWorkStatusPanel() {
+      if (!workStatusContent || !workStatusCount) return;
+
+      try {
+        const [statusResponse, categoryPageResponse] = await Promise.all([
+          fetch(WORK_STATUS_API, { headers: { Accept: "application/json" } }),
+          fetch("kategorie.html", { cache: "no-store" })
+        ]);
+
+        if (!statusResponse.ok) {
+          throw new Error(`Status-API antwortet mit ${statusResponse.status}`);
+        }
+
+        if (!categoryPageResponse.ok) {
+          throw new Error(`kategorie.html konnte nicht geladen werden (${categoryPageResponse.status})`);
+        }
+
+        const statusData = await statusResponse.json();
+        const categoryPageHtml = await categoryPageResponse.text();
+        const csvLinks = collectCategoryCsvLinks(categoryPageHtml);
+
+        const items = normalizeStatusRows(statusData)
+          .filter(function (item) {
+            return normalizeStatusValue(item.status) === WORK_STATUS_VALUE;
+          })
+          .sort(function (a, b) {
+            return dateToTimestamp(b.updated_at) - dateToTimestamp(a.updated_at);
+          });
+
+        renderWorkStatusItems(items, csvLinks);
+      } catch (error) {
+        console.error("Noch-in-Arbeit panel error:", error);
+        workStatusCount.textContent = "–";
+        workStatusContent.innerHTML = `
+          <p class="work-status-message work-status-message--error">
+            Die Kategorien konnten nicht geladen werden.
+          </p>
+        `;
+      }
+    }
+
+    function normalizeStatusRows(payload) {
+      if (Array.isArray(payload)) {
+        return payload.map(normalizeStatusRow).filter(Boolean);
+      }
+
+      if (!payload || typeof payload !== "object") {
+        return [];
+      }
+
+      // Also accept common wrapped API responses.
+      const wrappedRows = payload.items || payload.data || payload.results;
+      if (Array.isArray(wrappedRows)) {
+        return wrappedRows.map(normalizeStatusRow).filter(Boolean);
+      }
+
+      // Existing status function may return:
+      // { "Kategorie A": { status, remark, updated_at }, ... }
+      return Object.entries(payload).map(function ([itemId, value]) {
+        if (value && typeof value === "object" && !Array.isArray(value)) {
+          return normalizeStatusRow({ item_id: itemId, ...value });
+        }
+        return null;
+      }).filter(Boolean);
+    }
+
+    function normalizeStatusRow(row) {
+      if (!row || typeof row !== "object") return null;
+
+      const itemId = row.item_id ?? row.itemId ?? row.id ?? row.name ?? row.kategorie;
+      if (!itemId) return null;
+
+      return {
+        item_id: String(itemId).trim(),
+        status: row.status ?? "",
+        remark: row.remark ?? row.bemerkung ?? "",
+        updated_at: row.updated_at ?? row.updatedAt ?? row.modified_at ?? row.modifiedAt ?? null
+      };
+    }
+
+    function normalizeStatusValue(value) {
+      return String(value || "")
+        .trim()
+        .toLocaleLowerCase("de-DE")
+        .replace(/[\s-]+/g, "_");
+    }
+
+    function collectCategoryCsvLinks(html) {
+      const parser = new DOMParser();
+      const documentFromCategoryPage = parser.parseFromString(html, "text/html");
+      const linkMap = new Map();
+
+      documentFromCategoryPage.querySelectorAll(".section ul li").forEach(function (listItem) {
+        const nameElement = listItem.querySelector(".item-name");
+        const linkElement = listItem.querySelector('a[href]');
+
+        if (!nameElement || !linkElement) return;
+
+        // This follows the same item_id logic already used in kategorie.html:
+        // only the first text node of .item-name is the category name.
+        const firstTextNode = Array.from(nameElement.childNodes).find(function (node) {
+          return node.nodeType === Node.TEXT_NODE && node.textContent.trim();
+        });
+
+        const categoryName = firstTextNode
+          ? firstTextNode.textContent.trim()
+          : nameElement.textContent.trim();
+
+        const absoluteUrl = new URL(linkElement.getAttribute("href"), window.location.href).href;
+        linkMap.set(normalizeCategoryName(categoryName), absoluteUrl);
+      });
+
+      return linkMap;
+    }
+
+    function normalizeCategoryName(value) {
+      return String(value || "")
+        .normalize("NFC")
+        .replace(/\u00a0/g, " ")
+        .replace(/\s+/g, " ")
+        .trim()
+        .toLocaleLowerCase("de-DE");
+    }
+
+    function renderWorkStatusItems(items, csvLinks) {
+      workStatusCount.textContent = String(items.length);
+
+      if (items.length === 0) {
+        workStatusContent.innerHTML = `
+          <p class="work-status-message">
+            Zurzeit ist keine Kategorie auf „noch in Arbeit“ gesetzt.
+          </p>
+        `;
+        return;
+      }
+
+      workStatusContent.innerHTML = `
+        <ul class="work-status-list" role="list">
+          ${items.map(function (item) {
+            const csvUrl = csvLinks.get(normalizeCategoryName(item.item_id));
+            const targetUrl = csvUrl || "kategorie.html";
+            const titleText = csvUrl
+              ? `${item.item_id} – CSV-Datei öffnen`
+              : `${item.item_id} – Link in kategorie.html nicht gefunden`;
+
+            return `
+              <li class="work-status-item">
+                <a
+                  class="work-status-link"
+                  href="${escapeHtml(targetUrl)}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="${escapeHtml(titleText)}"
+                >
+                  <span class="work-status-name">${escapeHtml(item.item_id)}</span>
+                  <span class="work-status-meta">
+                    <span>Noch in Arbeit</span>
+                    <time datetime="${escapeHtml(item.updated_at || "")}">
+                      ${escapeHtml(formatUpdatedAt(item.updated_at))}
+                    </time>
+                  </span>
+                  ${item.remark
+                    ? `<span class="work-status-remark">${escapeHtml(item.remark)}</span>`
+                    : ""
+                  }
+                </a>
+              </li>
+            `;
+          }).join("")}
+        </ul>
+      `;
+    }
+
+    function dateToTimestamp(value) {
+      const timestamp = Date.parse(value || "");
+      return Number.isFinite(timestamp) ? timestamp : 0;
+    }
+
+    function formatUpdatedAt(value) {
+      const timestamp = dateToTimestamp(value);
+      if (!timestamp) return "Zeit unbekannt";
+
+      return new Intl.DateTimeFormat("de-DE", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      }).format(new Date(timestamp));
+    }
 
     // =====================================================
     // Supabase search via Netlify Functions

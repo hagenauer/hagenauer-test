@@ -566,3 +566,184 @@ body {
     padding-top: 4px;
   }
 }
+
+/* =========================================================
+   INDEX PAGE: "NOCH IN ARBEIT" PANEL
+   ========================================================= */
+
+/*
+  The existing .container and .card-grid are not changed.
+  On wide desktop screens the panel uses only the free space
+  to the left of the existing category cards.
+*/
+.overview-content {
+  position: relative;
+}
+
+.work-status-panel {
+  position: absolute;
+  top: 22px;
+  right: calc(100% + 14px);
+  width: min(340px, calc((100vw - 1100px) / 2 - 20px));
+  max-height: 545px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  color: var(--text);
+}
+
+.work-status-panel__header {
+  padding: 16px 16px 13px;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in oklab, var(--bg-soft) 92%, var(--brand) 8%);
+}
+
+.work-status-panel__title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.work-status-panel__title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.work-status-panel__indicator {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 10px;
+  border-radius: 999px;
+  background: #a09b9b;
+  box-shadow: 0 0 0 4px rgba(160, 155, 155, 0.16);
+}
+
+.work-status-panel__count {
+  min-width: 28px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--brand) 12%, transparent);
+  color: var(--brand-2);
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.work-status-panel__subtitle {
+  margin: 7px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.work-status-list {
+  list-style: none;
+  margin: 0;
+  padding: 8px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+.work-status-item + .work-status-item {
+  margin-top: 7px;
+}
+
+.work-status-link {
+  display: block;
+  padding: 11px 12px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  color: var(--text);
+  text-decoration: none;
+  background: color-mix(in oklab, var(--bg-soft) 95%, var(--brand) 5%);
+  transition: transform .15s ease, border-color .2s ease, background .2s ease, box-shadow .2s ease;
+}
+
+.work-status-link:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in oklab, var(--brand) 24%, var(--line));
+  background: color-mix(in oklab, var(--bg-soft) 89%, var(--brand) 11%);
+  box-shadow: 0 7px 16px rgba(15, 23, 42, 0.08);
+}
+
+.work-status-link:focus-visible {
+  outline: 3px solid color-mix(in oklab, var(--brand) 35%, transparent);
+  outline-offset: 2px;
+}
+
+.work-status-name {
+  display: block;
+  font-size: 13px;
+  font-weight: 750;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.work-status-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+.work-status-remark {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.work-status-message {
+  margin: 0;
+  padding: 22px 16px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.work-status-message--error {
+  color: #b91c1c;
+}
+
+/*
+  There is not enough left-side space below this width.
+  The panel then moves above the cards instead of overlapping them.
+*/
+@media (max-width: 1659px) {
+  .work-status-panel {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: 100%;
+    max-height: 420px;
+    margin: 22px 0 0;
+  }
+
+  .overview-content > .card-grid {
+    margin-top: 16px;
+  }
+}
+
+@media (max-width: 719px) {
+  .work-status-panel {
+    max-height: 390px;
+  }
+}
