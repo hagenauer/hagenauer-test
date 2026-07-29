@@ -747,3 +747,43 @@ body {
     max-height: 390px;
   }
 }
+
+
+/* =========================================================
+   NOCH IN ARBEIT: INTERNAL SCROLLING
+   Keeps the existing panel boundary and allows all entries
+   to be viewed by scrolling inside the panel.
+   ========================================================= */
+
+#workStatusContent {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.work-status-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+}
+
+.work-status-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.work-status-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.work-status-list::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--muted) 38%, transparent);
+  border-radius: 999px;
+}
+
+.work-status-list::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in oklab, var(--muted) 58%, transparent);
+}
