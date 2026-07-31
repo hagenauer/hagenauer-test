@@ -117,6 +117,43 @@
             <p class="work-status-message">Kategorien werden geladen …</p>
           </div>
         </aside>
+        <aside class="syntax-status-panel" aria-labelledby="syntax-status-title">
+
+          <div class="syntax-status-panel__header">
+
+            <div class="syntax-status-panel__title-row">
+
+              <h3 class="syntax-status-panel__title" id="syntax-status-title">
+                <span class="syntax-status-panel__indicator"></span>
+                 Syntax anlegen
+              </h3>
+
+              <span 
+                class="syntax-status-panel__count" 
+                id="syntaxStatusCount">
+                0
+              </span>
+
+            </div>
+
+
+            <p class="syntax-status-panel__subtitle">
+               Zuletzt aktualisierte Kategorien zuerst. Anklicken, um die Datei zu öffnen.
+            </p>
+
+          </div>
+
+
+          <div id="syntaxStatusContent">
+
+            <p class="syntax-status-message">
+              Kategorien werden geladen …
+            </p>
+
+          </div>
+
+
+        </aside>
 
         <ul class="card-grid" role="list">
 
@@ -461,6 +498,137 @@
         minute: "2-digit"
       }).format(new Date(timestamp));
     }
+
+
+
+
+    // =====================================================
+    // "Syntax anlegen" list from Supabase status data
+    // =====================================================
+
+    const SYNTAX_STATUS_VALUE = "syntax_anlegen";
+
+    const syntaxStatusContent =
+      document.getElementById("syntaxStatusContent");
+
+    const syntaxStatusCount =
+      document.getElementById("syntaxStatusCount");
+
+    loadSyntaxStatusPanel();
+
+    async function loadSyntaxStatusPanel() {
+      if (!syntaxStatusContent || !syntaxStatusCount) return;
+
+      try {
+        const [statusResponse, categoryPageResponse] = await Promise.all([
+          fetch(WORK_STATUS_API, {
+            headers: { Accept: "application/json" }
+          }),
+          fetch("kategorie.html", {
+            cache: "no-store"
+          })
+        ]);
+
+        if (!statusResponse.ok) {
+          throw new Error(
+            `Status-API antwortet mit ${statusResponse.status}`
+          );
+        }
+
+        if (!categoryPageResponse.ok) {
+          throw new Error(
+            `kategorie.html konnte nicht geladen werden (${categoryPageResponse.status})`
+          );
+        }
+
+        const statusData = await statusResponse.json();
+        const categoryPageHtml = await categoryPageResponse.text();
+        const csvLinks = collectCategoryCsvLinks(categoryPageHtml);
+
+        const items = normalizeStatusRows(statusData)
+          .filter(function (item) {
+            return normalizeStatusValue(item.status) === SYNTAX_STATUS_VALUE;
+          })
+          .sort(function (a, b) {
+            return (
+              dateToTimestamp(b.updated_at) -
+              dateToTimestamp(a.updated_at)
+            );
+          });
+
+        renderSyntaxStatusItems(items, csvLinks);
+
+      } catch (error) {
+        console.error("Syntax-anlegen panel error:", error);
+
+        syntaxStatusCount.textContent = "–";
+
+        syntaxStatusContent.innerHTML = `
+          <p class="syntax-status-message syntax-status-message--error">
+            Die Kategorien konnten nicht geladen werden.
+          </p>
+        `;
+      }
+    }
+
+    function renderSyntaxStatusItems(items, csvLinks) {
+      syntaxStatusCount.textContent = String(items.length);
+
+      if (items.length === 0) {
+        syntaxStatusContent.innerHTML = `
+          <p class="syntax-status-message">
+            Zurzeit ist keine Kategorie auf „Syntax anlegen“ gesetzt.
+          </p>
+        `;
+        return;
+      }
+
+      syntaxStatusContent.innerHTML = `
+        <ul class="syntax-status-list" role="list">
+          ${items.map(function (item) {
+            const csvUrl = csvLinks.get(
+              normalizeCategoryName(item.item_id)
+            );
+
+            const targetUrl = csvUrl || "kategorie.html";
+
+            const titleText = csvUrl
+              ? `${item.item_id} – CSV-Datei öffnen`
+              : `${item.item_id} – Link in kategorie.html nicht gefunden`;
+
+            return `
+              <li class="syntax-status-item">
+                <a
+                  class="syntax-status-link"
+                  href="${escapeHtml(targetUrl)}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="${escapeHtml(titleText)}"
+                >
+                  <span class="syntax-status-name">
+                    ${escapeHtml(item.item_id)}
+                  </span>
+
+                  <span class="syntax-status-meta">
+                    <span>Syntax anlegen</span>
+
+                    <time datetime="${escapeHtml(item.updated_at || "")}">
+                      ${escapeHtml(formatUpdatedAt(item.updated_at))}
+                    </time>
+                  </span>
+
+                  ${item.remark
+                    ? `<span class="syntax-status-remark">${escapeHtml(item.remark)}</span>`
+                    : ""
+                  }
+                </a>
+              </li>
+            `;
+          }).join("")}
+        </ul>
+      `;
+    }
+
 
     // =====================================================
     // Supabase search via Netlify Functions
