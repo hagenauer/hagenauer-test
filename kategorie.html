@@ -309,6 +309,7 @@
 
     /* color the status via a dot + select background */
     li.status-not-started .item-name::before,
+    li.status-syntax-anlegen .item-name::before,
     li.status-in-progress .item-name::before,
     li.status-new-import .item-name::before,
     li.status-completed .item-name::before{
@@ -321,6 +322,7 @@
     }
 
     li.status-not-started .item-name::before{ background:#22c55e; }   /* green */
+    li.status-syntax-anlegen .item-name::before{ background:#8b5cf6; }   /* purple */
     li.status-in-progress .item-name::before{ background:#a09b9b; }   /* yellow */
     li.status-new-import .item-name::before{ background:#f59e0b; }   /* orange */
     li.status-completed  .item-name::before{ background:#ef4444; } /* red */
@@ -328,6 +330,10 @@
     li.status-not-started .status-select{
       background:#ecfdf3;
       border-color:#bbf7d0;
+    }
+    li.status-syntax-anlegen .status-select{
+      background:#f3e8ff;
+      border-color:#c084fc;
     }
     li.status-in-progress .status-select{
       background:#cececc;
