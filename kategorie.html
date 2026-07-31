@@ -7285,8 +7285,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ---------- HELPERS ---------- */
   function applyStatusAppearance(li, status){
-    li.classList.remove('status-not-started','status-in-progress','status-new-import','status-completed');
+    li.classList.remove('status-not-started','status-in-progress','status-syntax-anlegen','status-new-import','status-completed');
     if (status === 'not_started') li.classList.add('status-not-started');
+    if (status === 'syntax_anlegen') li.classList.add('status-syntax-anlegen');
     if (status === 'in_arbeit') li.classList.add('status-in-progress');
     if (status === 'neue_import') li.classList.add('status-new-import');
     if (status === 'abgeschlossen') li.classList.add('status-completed');
@@ -7340,6 +7341,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <label>Status:
             <select class="status-select">
               <option value="not_started">noch nicht angefangen</option>
+              <option value="syntax_anlegen">Syntax anlegen</option>
               <option value="in_arbeit">noch in Arbeit</option>
               <option value="neue_import">neue Artikel importiert</option>
               <option value="abgeschlossen">abgeschlossen</option>
