@@ -536,7 +536,6 @@ function loginPage(url, hasError, status) {
         <p class="intro">
           Bitte geben Sie das gemeinsame Passwort ein,
           um die Datenbank zu öffnen.
-          Ein Benutzername ist nicht erforderlich.
         </p>
 
         ${errorMarkup}
